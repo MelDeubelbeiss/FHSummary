@@ -1,0 +1,1025 @@
+[
+  {
+    "Formelzeichen": [
+      "R1",
+      "R2",
+      "Rges"
+    ],
+    "Einheiten": [
+      "\u03a9",
+      "\u03a9",
+      "\u03a9"
+    ],
+    "Name": "Serienwiderstand",
+    "Beschreibung": [
+      "Serienwiderstand 1",
+      "Serienwiderstand 2",
+      "Gesamtwiderstand"
+    ],
+    "Formeln": [
+      "Rges, R1 + R2"
+    ],
+    "Untermenu": "Grundlagen"
+  },
+  {
+    "Formelzeichen": [
+      "R1",
+      "R2",
+      "Rges"
+    ],
+    "Einheiten": [
+      "\u03a9",
+      "\u03a9",
+      "\u03a9"
+    ],
+    "Name": "Parallelwiderstand",
+    "Beschreibung": [
+      "Parallelwiderstand 1",
+      "Parallelwiderstand 2",
+      "Gesamtwiderstand"
+    ],
+    "Formeln": [
+      "Rges, (R1 * R2) / (R1 + R2)"
+    ],
+    "Untermenu": "Grundlagen"
+  },
+  {
+    "Formelzeichen": [
+      "R1",
+      "R2",
+      "Uin",
+      "Uout",
+      "Iges",
+      "PR1",
+      "PR2",
+      "Pges",
+      "Gu",
+      "Gp"
+    ],
+    "Einheiten": [
+      "\u03a9",
+      "\u03a9",
+      "V",
+      "V",
+      "A",
+      "W",
+      "W",
+      "W",
+      "dB",
+      "dB"
+    ],
+    "Name": "Spannungsteiler unbelastet",
+    "Beschreibung": [
+      "Widerstand 1",
+      "Widerstand 2",
+      "Eingangsspannung",
+      "Ausgangsspannung",
+      "Strom",
+      "Leistung an R1",
+      "Leistung an R2",
+      "Gesamtleistung",
+      "Spannungsverst\u00e4rkungsmass",
+      "Leistungsverst\u00e4rkungsmass"
+    ],
+    "Formeln": [
+      "Uout, Uin * R2 / (R1 + R2)",
+      "Iges, Uin / (R1 + R2)",
+      "PR1, Pow(Iges, 2) * R1",
+      "PR2, Pow(Iges, 2) * R2",
+      "Pges, PR1 + PR2",
+      "Gu, 20 * log(Uout / Uin, 10)",
+      "Gp, 10 * log(PR2 / Pges, 10)"
+    ],
+    "Untermenu": "Grundlagen"
+  },
+  {
+    "Formelzeichen": [
+      "R1",
+      "R2",
+      "RL",
+      "Rges",
+      "Uin",
+      "Uout",
+      "IR1",
+      "IR2",
+      "IRL",
+      "PR1",
+      "PR2",
+      "PRL",
+      "Pges",
+      "Gu",
+      "Gp"
+    ],
+    "Einheiten": [
+      "\u03a9",
+      "\u03a9",
+      "\u03a9",
+      "\u03a9",
+      "V",
+      "V",
+      "A",
+      "A",
+      "A",
+      "W",
+      "W",
+      "W",
+      "W",
+      "dB",
+      "dB"
+    ],
+    "Name": "Spannungsteiler belastet",
+    "Beschreibung": [
+      "Widerstand 1",
+      "Widerstand 2",
+      "Lastwiderstand",
+      "Gesamtwiderstand",
+      "Eingangsspannung",
+      "Ausgangsspannung",
+      "Strom durch R1 (Gesamtstrom)",
+      "Strom durch R2",
+      "Strom durch RL",
+      "Leistung an R1",
+      "Leistung an R2",
+      "Leistung an RL",
+      "Gesamtleistung",
+      "Spannungsverst\u00e4rkungsmass",
+      "Leistungsverst\u00e4rkungsmass"
+    ],
+    "Formeln": [
+      "Rges, R1 + (R2 * RL / (R2 + RL))",
+      "Rges, Uin / IR1",
+      "Uout, Uin * (R2 * RL / (R2 + RL)) / (R1 + (R2 * RL / (R2 + RL)))",
+      "IR1, Uin / (R1 + (R2 * RL / (R2 + RL)))",
+      "IR2, Uout / R2",
+      "IRL, Uout / RL",
+      "PR1, Pow(IR1, 2) * R1",
+      "PR2, Pow(IR2, 2) * R2",
+      "PRL, Pow(IRL, 2) * RL",
+      "Pges, PR1 + PR2 + PRL",
+      "Gu, 20 * log(Uout / Uin, 10)",
+      "Gp, 10 * log(PRL / Pges, 10)"
+    ],
+    "Untermenu": "Grundlagen"
+  },
+  {
+    "Formelzeichen": [
+      "RA",
+      "RB",
+      "RC",
+      "RAB",
+      "RAC",
+      "RBC"
+    ],
+    "Einheiten": [
+      "\u03a9",
+      "\u03a9",
+      "\u03a9",
+      "\u03a9",
+      "\u03a9",
+      "\u03a9"
+    ],
+    "Name": "Stern und Dreick",
+    "Beschreibung": [
+      "Widerstand von Eingang A in die Mitte",
+      "Widerstand von Eingang B in die Mitte",
+      "Widerstand von Eingang C in die Mitte",
+      "Widerstand zwischen Eingang A und B",
+      "Widerstand zwischen Eingang A und C",
+      "Widerstand zwischen Eingang B und C"
+    ],
+    "Formeln": [
+      "RAC, (RA * RB + RB * RC + RC * RA) / RB",
+      "RAB, (RA * RB + RB * RC + RC * RA) / RC",
+      "RBC, (RA * RB + RB * RC + RC * RA) / RA"
+    ],
+    "Untermenu": "Grundlagen"
+  },
+  {
+    "Formelzeichen": [
+      "U",
+      "R",
+      "l",
+      "P"
+    ],
+    "Einheiten": [
+      "V",
+      "\u03a9",
+      "A",
+      "W"
+    ],
+    "Name": "URIP",
+    "Beschreibung": [
+      "Spannung",
+      "Widerstand",
+      "Strom",
+      "Leistung"
+    ],
+    "Formeln": [
+      "U, R * l",
+      "P, U * l"
+    ],
+    "Untermenu": "Grundlagen"
+  },
+  {
+    "Formelzeichen": [
+      "U",
+      "u",
+      "us",
+      "w",
+      "f",
+      "T",
+      "uss",
+      "t"
+    ],
+    "Einheiten": [
+      "V",
+      "V",
+      "V",
+      "Hz",
+      "Hz",
+      "s",
+      "V",
+      "s"
+    ],
+    "Name": "Wechselspannungsgr\u00f6ssen",
+    "Beschreibung": [
+      "Effektivwert",
+      "Augenblickswert",
+      "Spitzenwert",
+      "Kreisfrequenz",
+      "Frequenz",
+      "Periodendauer",
+      "Spitzen-Spitzen-Wert",
+      "Zeitpunkt"
+    ],
+    "Formeln": [
+      "U, us / sqrt(2)",
+      "u, us * sin(w * t)",
+      "w, 2 * pi * f",
+      "T, 1 / f",
+      "uss, 2 * sqrt(2) * U"
+    ],
+    "Untermenu": "Grundlagen"
+  },
+  {
+    "Formelzeichen": [
+      "R",
+      "C",
+      "\u03c4",
+      "uc",
+      "ic",
+      "U",
+      "l",
+      "t"
+    ],
+    "Einheiten": [
+      "\u03a9",
+      "F",
+      "s",
+      "V",
+      "A",
+      "V",
+      "A",
+      "s"
+    ],
+    "Name": "Kondensator laden an Gleichspannung",
+    "Beschreibung": [
+      "Serienwiderstand",
+      "Kapazit\u00e4t",
+      "Zeitkonstante",
+      "Augenblickswert Spannung",
+      "Augenblickswert Strom",
+      "Speisespannung",
+      "Anfangsstrom",
+      "Zeit"
+    ],
+    "Formeln": [
+      "\u03c4, R * C",
+      "uc, U * (1 - E ** (-1 * t / \u03c4))",
+      "ic, l * E ** (-t / \u03c4)",
+      "l, U / R"
+    ],
+    "Untermenu": "Kondensator"
+  },
+  {
+    "Formelzeichen": [
+      "R",
+      "C",
+      "\u03c4",
+      "uc",
+      "ic",
+      "U",
+      "l",
+      "t"
+    ],
+    "Einheiten": [
+      "\u03a9",
+      "F",
+      "s",
+      "V",
+      "A",
+      "V",
+      "A",
+      "s"
+    ],
+    "Name": "Kondensator entladen an Gleichspannung",
+    "Beschreibung": [
+      "Serienwiderstand",
+      "Kapazit\u00e4t",
+      "Zeitkonstante",
+      "Augenblickswert Spannung",
+      "Augenblickswert Strom",
+      "Speisespannung",
+      "Anfangsstrom",
+      "Zeit"
+    ],
+    "Formeln": [
+      "\u03c4, R * C",
+      "uc, U * (E ** (-1 * t / \u03c4))",
+      "ic, -l * E ** (-t / \u03c4)",
+      "l, U / R"
+    ],
+    "Untermenu": "Kondensator"
+  },
+  {
+    "Formelzeichen": [
+      "C",
+      "Xc",
+      "U",
+      "l",
+      "f"
+    ],
+    "Einheiten": [
+      "F",
+      "\u03a9",
+      "V",
+      "A",
+      "Hz"
+    ],
+    "Name": "Kondensator an Wechselspannung",
+    "Beschreibung": [
+      "Kapazit\u00e4t",
+      "Kapazitiver Blindwiderstand",
+      "Spannung",
+      "Strom",
+      "Frequenz"
+    ],
+    "Formeln": [
+      "Xc, U / l",
+      "Xc, 1 / (2 * pi * f * C)"
+    ],
+    "Untermenu": "Kondensator"
+  },
+  {
+    "Formelzeichen": [
+      "C1",
+      "C2",
+      "Cges"
+    ],
+    "Einheiten": [
+      "F",
+      "F",
+      "F"
+    ],
+    "Name": "Kondensator Parallelschaltung",
+    "Beschreibung": [
+      "Parallelkapazit\u00e4t 1",
+      "Parallelkapazit\u00e4t 2",
+      "Gesamtkapazit\u00e4t"
+    ],
+    "Formeln": [
+      "Cges, C1 + C2"
+    ],
+    "Untermenu": "Kondensator"
+  },
+  {
+    "Formelzeichen": [
+      "C1",
+      "C2",
+      "Cges"
+    ],
+    "Einheiten": [
+      "F",
+      "F",
+      "F"
+    ],
+    "Name": "Kondensator Seriellschaltung",
+    "Beschreibung": [
+      "Seriellkapazit\u00e4t 1",
+      "Seriellkapazit\u00e4t 2",
+      "Gesamtkapazit\u00e4t"
+    ],
+    "Formeln": [
+      "Cges, 1 / (1 / C1 + 1 / C2)"
+    ],
+    "Untermenu": "Kondensator"
+  },
+  {
+    "Formelzeichen": [
+      "L",
+      "R",
+      "\u03c4",
+      "ul",
+      "il",
+      "U",
+      "l",
+      "t"
+    ],
+    "Einheiten": [
+      "H",
+      "\u03a9",
+      "s",
+      "V",
+      "A",
+      "V",
+      "A",
+      "s"
+    ],
+    "Name": "Spule laden an Gleichspannung",
+    "Beschreibung": [
+      "Induktivit\u00e4t",
+      "Widerstand",
+      "Zeitkonstante",
+      "Augenblickswert Spannung",
+      "Augenblickswert Strom",
+      "Spannung",
+      "Strom",
+      "Zeit"
+    ],
+    "Formeln": [
+      "\u03c4, L / R",
+      "ul, U * E ** (-t / \u03c4)",
+      "il, l * (1 - E **(-t / \u03c4))",
+      "l, U / R"
+    ],
+    "Untermenu": "Spule"
+  },
+  {
+    "Formelzeichen": [
+      "L",
+      "R",
+      "\u03c4",
+      "ul",
+      "il",
+      "U",
+      "l",
+      "t"
+    ],
+    "Einheiten": [
+      "H",
+      "\u03a9",
+      "s",
+      "V",
+      "A",
+      "V",
+      "A",
+      "s"
+    ],
+    "Name": "Spule entladen an Gleichspannung",
+    "Beschreibung": [
+      "Induktivit\u00e4t",
+      "Widerstand",
+      "Zeitkonstante",
+      "Augenblickswert Spannung",
+      "Augenblickswert Strom",
+      "Spannung",
+      "Strom",
+      "Zeit"
+    ],
+    "Formeln": [
+      "\u03c4, L / R",
+      "ul, -U * E ** (-t / \u03c4)",
+      "il, l * (E **(-t / \u03c4))",
+      "l, U / R"
+    ],
+    "Untermenu": "Spule"
+  },
+  {
+    "Formelzeichen": [
+      "L",
+      "Xl",
+      "U",
+      "l",
+      "f"
+    ],
+    "Einheiten": [
+      "H",
+      "\u03a9",
+      "V",
+      "A",
+      "Hz"
+    ],
+    "Name": "Spule an Wechselspannung",
+    "Beschreibung": [
+      "Induktivit\u00e4t",
+      "Induktiver Blindwiderstand",
+      "Spannung",
+      "Strom",
+      "Frequenz"
+    ],
+    "Formeln": [
+      "Xl, U / l",
+      "Xl, 2 * pi * f * L"
+    ],
+    "Untermenu": "Spule"
+  },
+  {
+    "Formelzeichen": [
+      "C",
+      "Xc",
+      "R",
+      "Z",
+      "Uc",
+      "Ur",
+      "Uges",
+      "l",
+      "\u03c6",
+      "f"
+    ],
+    "Einheiten": [
+      "F",
+      "\u03a9",
+      "\u03a9",
+      "\u03a9",
+      "V",
+      "V",
+      "V",
+      "A",
+      "\u00b0",
+      "Hz"
+    ],
+    "Name": "RC Reihenschaltung",
+    "Beschreibung": [
+      "Kapazit\u00e4t",
+      "Kapazitiver Blindwiderstand",
+      "Widerstand",
+      "Impedanz",
+      "Kondensatorspannung",
+      "Widerstandsspannung",
+      "Gesamtspannung",
+      "Strom",
+      "Phasenverschiebung",
+      "Frequenz"
+    ],
+    "Formeln": [
+      "Xc, 1 / (2 * pi * f * C)",
+      "Uges ** 2, (Ur ** 2 + Uc ** 2)",
+      "Z, Uges / l",
+      "Z, (R ** 2 + Xc ** 2) ** (1/2)"
+    ],
+    "Untermenu": "Wirk- und Blindwiderst\u00e4nde"
+  },
+  {
+    "Formelzeichen": [
+      "RC",
+      "RB",
+      "IC",
+      "IBsoll",
+      "IBist",
+      "UB",
+      "UBE",
+      "UE",
+      "UCEsat",
+      "\u00fc",
+      "B",
+      "Pv",
+      "caPv"
+    ],
+    "Einheiten": [
+      "\u03a9",
+      "\u03a9",
+      "A",
+      "A",
+      "A",
+      "V",
+      "V",
+      "V",
+      "V",
+      "",
+      "",
+      "W",
+      "W"
+    ],
+    "Name": "Transistor als Schalter",
+    "Beschreibung": [
+      "Kollektorwiderstand",
+      "Basiswiderstand",
+      "Kollektorstrom",
+      "Basisstrom ohne \u00dcbersteuerung",
+      "Basisstrom mit \u00dcbersteuerung",
+      "Betriebsspannung",
+      "Basis-Emitter-Spannung",
+      "Eingangsspannung",
+      "Kollektor-Emitter-S\u00e4ttigungsspannung",
+      "\u00dcbersteuerungsfaktor (2 - 5)",
+      "Gleichstromverst\u00e4rkung",
+      "Verlustleistung (mit Basisverlust)",
+      "Verlustleistung (ohne Basisverlust)"
+    ],
+    "Formeln": [
+      "(UB - UCEsat) / IC, RC",
+      "IC / B, IBsoll",
+      "\u00fc * IBsoll, IBist",
+      "(UE - UBE) / IBist, RB",
+      "UCEsat * IC + UBE * IBist, Pv",
+      "UCEsat * IC, caPv"
+    ],
+    "Untermenu": "Transistor"
+  },
+  {
+    "Formelzeichen": [
+      "ti",
+      "tp",
+      "D",
+      "T",
+      "f",
+      "RA",
+      "RB",
+      "C"
+    ],
+    "Einheiten": [
+      "s",
+      "s",
+      "%",
+      "s",
+      "Hz",
+      "\u03a9",
+      "\u03a9",
+      "F"
+    ],
+    "Name": "NE555 Astabil",
+    "Beschreibung": [
+      "Impulsdauer",
+      "Pausendauer",
+      "Tastgrad",
+      "Periodendauer",
+      "Frequenz",
+      "Widerstand",
+      "Widerstand",
+      "Kondensator"
+    ],
+    "Formeln": [
+      "ti + tp, T",
+      "0.69 * (RA + RB) * C, ti",
+      "0.69 * RB * C, tp",
+      "0.69 * (RA + 2 * RB) * C, T",
+      "1 / T, f",
+      "ti / T * 100, D"
+    ],
+    "Untermenu": "NE555"
+  },
+  {
+    "Formelzeichen": [
+      "ti",
+      "R",
+      "C"
+    ],
+    "Einheiten": [
+      "s",
+      "\u03a9",
+      "F"
+    ],
+    "Name": "NE555 Monostabil",
+    "Beschreibung": [
+      "Impulsdauer",
+      "Widerstand",
+      "Kondensator"
+    ],
+    "Formeln": [
+      "R * C * 1.1, ti"
+    ],
+    "Untermenu": "NE555"
+  },
+  {
+    "Formelzeichen": [
+      "A",
+      "a",
+      "Zin",
+      "Zout",
+      "R1",
+      "R2",
+      "R3"
+    ],
+    "Einheiten": [
+      "dB",
+      "",
+      "\u03a9",
+      "\u03a9",
+      "\u03a9",
+      "\u03a9",
+      "\u03a9"
+    ],
+    "Name": "PI D\u00e4mpfungsglied",
+    "Beschreibung": [
+      "D\u00e4mpfung in dB",
+      "D\u00e4mpfung",
+      "Eingangsimpedanz",
+      "Ausgangsimpedanz",
+      "Widerstand zum Eingang",
+      "Widerstand zum Ausgang",
+      "Widerstand zu GND"
+    ],
+    "Formeln": [
+      "10 ** (A / 20), a",
+      "((a ** 2 - 1) * Zin * Zout ** (1 / 2)) / ((a ** 2 + 1) * Zout ** (1 / 2) - 2 * a * Zin ** (1 / 2)), R1",
+      "((a ** 2 - 1) * (Zin * Zout) ** (1 / 2)) / (2 * a), R2",
+      "((a ** 2 - 1) * Zout * Zin ** (1 / 2)) / ((a ** 2 + 1) * Zin ** (1 / 2) - 2 * a * Zout ** (1 / 2)), R3"
+    ],
+    "Untermenu": "D\u00e4mpfungsglied"
+  },
+  {
+    "Formelzeichen": [
+      "Gp",
+      "Vp",
+      "Gu",
+      "Vu",
+      "P1",
+      "P2",
+      "U1",
+      "U2"
+    ],
+    "Einheiten": [
+      "dB",
+      "",
+      "dB",
+      "",
+      "W",
+      "W",
+      "V",
+      "V"
+    ],
+    "Name": "dB-Umwandlung",
+    "Beschreibung": [
+      "Leistungsverst\u00e4rkungsmass",
+      "Leistungsverst\u00e4rkungsfaktor",
+      "Spannungsverst\u00e4rkungsmass",
+      "Spannungsverst\u00e4rkungsfaktor",
+      "Eingangsleistung",
+      "Ausgangsleistung",
+      "Eingangsspannung",
+      "Ausgangsspannung"
+    ],
+    "Formeln": [
+      "P2 / P1, Vp",
+      "10 ** (Gp / 10), Vp",
+      "U2 / U1, Vu",
+      "10 ** (Gu / 20), Vu",
+      "Gp, Gu"
+    ],
+    "Untermenu": "Umrechnung"
+  },
+  {
+    "Formelzeichen": [
+      "\u03bb",
+      "f"
+    ],
+    "Einheiten": [
+      "m",
+      "Hz"
+    ],
+    "Name": "Wellenl\u00e4nge",
+    "Beschreibung": [
+      "Wellenl\u00e4nge",
+      "Frequenz"
+    ],
+    "Formeln": [
+      "300000000 / f, \u03bb"
+    ],
+    "Untermenu": "Nachrichtentechnik"
+  },
+  {
+    "Formelzeichen": [
+      "fgu",
+      "fgo",
+      "vumax",
+      "RE",
+      "RFB",
+      "CE",
+      "CFB"
+    ],
+    "Einheiten": [
+      "Hz",
+      "Hz",
+      "",
+      "\u03a9",
+      "\u03a9",
+      "F",
+      "F"
+    ],
+    "Name": "OPV Bandpass",
+    "Beschreibung": [
+      "Untere Grenzfrequenz",
+      "Obere Grenzfrequenz",
+      "Maximale Spannungsverst\u00e4rkung",
+      "Eingangswiderstand",
+      "Feedback-Widerstand",
+      "Eingangskondensator",
+      "Feedback-Kondensator"
+    ],
+    "Formeln": [
+      "-vumax * RE, RFB",
+      "1 / (2 * pi * fgo * RFB), CFB",
+      "1 / (2 * pi * fgu * RE), CE"
+    ],
+    "Untermenu": "OPV"
+  },
+  {
+    "Formelzeichen": [
+      "fg",
+      "vumax",
+      "RE",
+      "RFB",
+      "CFB"
+    ],
+    "Einheiten": [
+      "Hz",
+      "",
+      "\u03a9",
+      "\u03a9",
+      "F"
+    ],
+    "Name": "OPV Tiefpass",
+    "Beschreibung": [
+      "Grenzfrequenz",
+      "Maximale Spannungsverst\u00e4rkung",
+      "Eingangswiderstand",
+      "Feedback-Widerstand",
+      "Kondensator"
+    ],
+    "Formeln": [
+      "-vumax * RE, RFB",
+      "1 / (2 * pi * fg * RFB), CFB"
+    ],
+    "Untermenu": "OPV"
+  },
+  {
+    "Formelzeichen": [
+      "fg",
+      "vumax",
+      "RE",
+      "CE",
+      "RFB"
+    ],
+    "Einheiten": [
+      "Hz",
+      "",
+      "\u03a9",
+      "F",
+      "\u03a9"
+    ],
+    "Name": "OPV Hochpass",
+    "Beschreibung": [
+      "Grenzfrequenz",
+      "Maximale Spannungsverst\u00e4rkung",
+      "Eingangswiderstand",
+      "Serienkondensator",
+      "Feedback-Widerstand"
+    ],
+    "Formeln": [
+      "CE, 1 / (2 * pi * fg * RFB)",
+      "RFB, -vumax * RE"
+    ],
+    "Untermenu": "OPV"
+  },
+  {
+    "Formelzeichen": [
+      "Vu",
+      "RC",
+      "RE",
+      "RL"
+    ],
+    "Einheiten": [
+      "",
+      "\u03a9",
+      "\u03a9",
+      "\u03a9"
+    ],
+    "Name": "Emitterschaltung",
+    "Beschreibung": [
+      "Spannungsverst\u00e4rkung",
+      "Kollektorwiderstand",
+      "Emitterwiderstand",
+      "Lastwiderstand"
+    ],
+    "Formeln": [
+      "Vu, ((RC * RL) / (RC + RL)) / RE"
+    ],
+    "Untermenu": "Transistor"
+  },
+  {
+    "Formelzeichen": [
+      "Ub",
+      "IF",
+      "UF",
+      "Rv",
+      "URv"
+    ],
+    "Einheiten": [
+      "V",
+      "A",
+      "V",
+      "\u03a9",
+      "V"
+    ],
+    "Name": "LED Vorwiderstand",
+    "Beschreibung": [
+      "Betriebsspannung",
+      "Vorw\u00e4rtsstrom",
+      "Vorw\u00e4rtsspannung",
+      "Vorwiderstand",
+      "Spannung \u00fcber dem Widerstand"
+    ],
+    "Formeln": [
+      "Ub, UF + URv",
+      "IF, URv / Rv"
+    ],
+    "Untermenu": "Grundlagen"
+  },
+  {
+    "Formelzeichen": [
+      "R1",
+      "R2",
+      "Uout",
+      "Uref",
+      "Iadj"
+    ],
+    "Einheiten": [
+      "\u03a9",
+      "\u03a9",
+      "V",
+      "V",
+      "A"
+    ],
+    "Name": "LM317",
+    "Beschreibung": [
+      "Oberer Widerstand",
+      "Unterer Widerstand",
+      "Ausgangsspannung",
+      "Referenzspannung",
+      "ADJ Strom"
+    ],
+    "Formeln": [
+      "Uout, Uref * (1 + R2 / R1) + R2 * Iadj"
+    ],
+    "Untermenu": "LM317"
+  },
+  {
+    "Formelzeichen": [
+      "f",
+      "T",
+      "R",
+      "C",
+      "VH",
+      "VTP",
+      "VTN"
+    ],
+    "Einheiten": [
+      "Hz",
+      "s",
+      "\u03a9",
+      "F",
+      "V",
+      "V",
+      "V"
+    ],
+    "Name": "Schmitt Trigger Oszillator",
+    "Beschreibung": [
+      "Frequenz",
+      "Periodendauer",
+      "Widerstand",
+      "Kapazit\u00e4t",
+      "Hysteresespannung",
+      "Obere Schaltschwelle",
+      "Untere Schaltschwelle"
+    ],
+    "Formeln": [
+      "f, VH / R / C",
+      "VH, VTP - VTN",
+      "f, 1 / T"
+    ],
+    "Untermenu": "Oszillator"
+  },
+  {
+    "Formelzeichen": [
+      "Tk",
+      "Tc",
+      "Tf"
+    ],
+    "Einheiten": [
+      "\u00b0K",
+      "\u00b0C",
+      "\u00b0F"
+    ],
+    "Name": "Temperaturumrechnung",
+    "Beschreibung": [
+      "Kelvin",
+      "Celcius",
+      "Fahrenheit"
+    ],
+    "Formeln": [
+      "Tk, Tc + 273.15",
+      "Tc, (Tf - 32) / 1.8"
+    ],
+    "Untermenu": "Umrechnung"
+  }
+]

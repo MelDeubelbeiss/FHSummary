@@ -1,0 +1,199 @@
+[
+  {
+    "Formelzeichen": [
+      "Qu",
+      "l",
+      "t"
+    ],
+    "Einheiten": [
+      "C",
+      "A",
+      "s"
+    ],
+    "Name": "Ladung",
+    "Beschreibung": [
+      "Ladung",
+      "Strom",
+      "Zeit"
+    ],
+    "Formeln": [
+      "Qu, l * t"
+    ],
+    "Untermenu": "Aet1 - 1"
+  },
+  {
+    "Formelzeichen": [
+      "R1",
+      "R2",
+      "Rpara",
+      "Rser"
+    ],
+    "Einheiten": [
+      "\u03a9",
+      "\u03a9",
+      "\u03a9",
+      "\u03a9"
+    ],
+    "Name": "SerieParallel",
+    "Beschreibung": [
+      "Widerstand 1",
+      "Widerstand 2",
+      "Parallelwiderstand",
+      "Seriewiderstand"
+    ],
+    "Formeln": [
+      "Rser, R1 + R2",
+      "Rpara, (R1 * R2) / (R1 + R2)"
+    ],
+    "Untermenu": "Aet1 - 1"
+  },
+  {
+    "Formelzeichen": [
+      "U",
+      "R",
+      "l",
+      "P"
+    ],
+    "Einheiten": [
+      "V",
+      "\u03a9",
+      "A",
+      "W"
+    ],
+    "Name": "URIP",
+    "Beschreibung": [
+      "Spannung",
+      "Widerstand",
+      "Strom",
+      "Leistung"
+    ],
+    "Formeln": [
+      "U, R * l",
+      "P, U * l"
+    ],
+    "Untermenu": "Aet1 - 1"
+  },
+  {
+    "Formelzeichen": [
+      "Pav",
+      "Pl",
+      "Iq",
+      "Uq",
+      "Rq",
+      "Rl"
+    ],
+    "Einheiten": [
+      "W",
+      "W",
+      "A",
+      "V",
+      "\u03a9",
+      "\u03a9"
+    ],
+    "Name": "MaxPower",
+    "Beschreibung": [
+      "Available Power",
+      "Load Power",
+      "Source Current",
+      "Source Voltage",
+      "Source Resistor",
+      "Load Resistor"
+    ],
+    "Formeln": [
+      "Pav, Iq * Iq * Rq / 4",
+      "Pav, Uq * Uq / (4 * Rq)",
+      "Pl, (4 / (2 + (Rl / Rq) + (Rq / Rl))) * Pav"
+    ],
+    "Untermenu": "Aet1 - 1"
+  },
+  {
+    "Formelzeichen": [
+      "Uqe",
+      "Ua",
+      "Iks",
+      "Ia",
+      "Rqe",
+      "Rl"
+    ],
+    "Einheiten": [
+      "V",
+      "V",
+      "A",
+      "A",
+      "\u03a9",
+      "\u03a9"
+    ],
+    "Name": "BelasteteQuelle",
+    "Beschreibung": [
+      "Source Voltage",
+      "Load Voltage",
+      "Short Current",
+      "Output Current",
+      "Source Resistor",
+      "Load Resistor"
+    ],
+    "Formeln": [
+      "Iks, Uqe / Rqe",
+      "Ia, Uqe / (Rqe + Rl)",
+      "Ua, Rl * Ia",
+      "Ua, Uqe * Rl / (Rqe + Rl)",
+      "Ua, Uqe - Ia * Rqe"
+    ],
+    "Untermenu": "Aet1 - 1"
+  },
+  {
+    "Formelzeichen": [
+      "R1",
+      "R2",
+      "R3",
+      "R12",
+      "R23",
+      "R13"
+    ],
+    "Einheiten": [
+      "\u03a9",
+      "\u03a9",
+      "\u03a9",
+      "\u03a9",
+      "\u03a9",
+      "\u03a9"
+    ],
+    "Name": "SternDreieck",
+    "Beschreibung": [
+      "Stern1",
+      "Stern2",
+      "Stern3",
+      "Dreieck1",
+      "Dreieck2",
+      "Dreieck3"
+    ],
+    "Formeln": [
+      "R1, R12 * R13 / (R12 + R23 + R13)",
+      "R2, R23 * R12 / (R12 + R23 + R13)",
+      "R3, R13 * R23 / (R12 + R23 + R13)"
+    ],
+    "Untermenu": "Aet1 - 2"
+  },
+  {
+    "Formelzeichen": [
+      "x",
+      "y",
+      "z"
+    ],
+    "Einheiten": [
+      "\u03a9",
+      "\u03a9",
+      "\u03a9"
+    ],
+    "Name": "ABCD",
+    "Beschreibung": [
+      "ABCD 1",
+      "ABCD 2",
+      "ABCD 3"
+    ],
+    "Formeln": [
+      "z, x + y"
+    ],
+    "Untermenu": "Untermenu"
+  }
+]

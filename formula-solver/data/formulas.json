@@ -1,0 +1,1025 @@
+[
+  {
+    "Formelzeichen": [
+      "R1",
+      "R2",
+      "Rges"
+    ],
+    "Einheiten": [
+      "\u03a9",
+      "\u03a9",
+      "\u03a9"
+    ],
+    "Name": "Resistors in series",
+    "Beschreibung": [
+      "Series resistor 1",
+      "Series resistor 2",
+      "Total resistance"
+    ],
+    "Formeln": [
+      "Rges, R1 + R2"
+    ],
+    "Untermenu": "Fundamentals"
+  },
+  {
+    "Formelzeichen": [
+      "R1",
+      "R2",
+      "Rges"
+    ],
+    "Einheiten": [
+      "\u03a9",
+      "\u03a9",
+      "\u03a9"
+    ],
+    "Name": "Resistors in parallel",
+    "Beschreibung": [
+      "Parallel resistor 1",
+      "Parallel resistor 2",
+      "Total resistance"
+    ],
+    "Formeln": [
+      "Rges, (R1 * R2) / (R1 + R2)"
+    ],
+    "Untermenu": "Fundamentals"
+  },
+  {
+    "Formelzeichen": [
+      "R1",
+      "R2",
+      "Uin",
+      "Uout",
+      "Iges",
+      "PR1",
+      "PR2",
+      "Pges",
+      "Gu",
+      "Gp"
+    ],
+    "Einheiten": [
+      "\u03a9",
+      "\u03a9",
+      "V",
+      "V",
+      "A",
+      "W",
+      "W",
+      "W",
+      "dB",
+      "dB"
+    ],
+    "Name": "Voltage divider, unloaded",
+    "Beschreibung": [
+      "Resistor 1",
+      "Resistor 2",
+      "Input voltage",
+      "Output voltage",
+      "Current",
+      "Power in R1",
+      "Power in R2",
+      "Total power",
+      "Voltage gain in dB",
+      "Power gain in dB"
+    ],
+    "Formeln": [
+      "Uout, Uin * R2 / (R1 + R2)",
+      "Iges, Uin / (R1 + R2)",
+      "PR1, Pow(Iges, 2) * R1",
+      "PR2, Pow(Iges, 2) * R2",
+      "Pges, PR1 + PR2",
+      "Gu, 20 * log(Uout / Uin, 10)",
+      "Gp, 10 * log(PR2 / Pges, 10)"
+    ],
+    "Untermenu": "Fundamentals"
+  },
+  {
+    "Formelzeichen": [
+      "R1",
+      "R2",
+      "RL",
+      "Rges",
+      "Uin",
+      "Uout",
+      "IR1",
+      "IR2",
+      "IRL",
+      "PR1",
+      "PR2",
+      "PRL",
+      "Pges",
+      "Gu",
+      "Gp"
+    ],
+    "Einheiten": [
+      "\u03a9",
+      "\u03a9",
+      "\u03a9",
+      "\u03a9",
+      "V",
+      "V",
+      "A",
+      "A",
+      "A",
+      "W",
+      "W",
+      "W",
+      "W",
+      "dB",
+      "dB"
+    ],
+    "Name": "Voltage divider, loaded",
+    "Beschreibung": [
+      "Resistor 1",
+      "Resistor 2",
+      "Load resistor",
+      "Total resistance",
+      "Input voltage",
+      "Output voltage",
+      "Current through R1 (total)",
+      "Current through R2",
+      "Current through RL",
+      "Power in R1",
+      "Power in R2",
+      "Power in RL",
+      "Total power",
+      "Voltage gain in dB",
+      "Power gain in dB"
+    ],
+    "Formeln": [
+      "Rges, R1 + (R2 * RL / (R2 + RL))",
+      "Rges, Uin / IR1",
+      "Uout, Uin * (R2 * RL / (R2 + RL)) / (R1 + (R2 * RL / (R2 + RL)))",
+      "IR1, Uin / (R1 + (R2 * RL / (R2 + RL)))",
+      "IR2, Uout / R2",
+      "IRL, Uout / RL",
+      "PR1, Pow(IR1, 2) * R1",
+      "PR2, Pow(IR2, 2) * R2",
+      "PRL, Pow(IRL, 2) * RL",
+      "Pges, PR1 + PR2 + PRL",
+      "Gu, 20 * log(Uout / Uin, 10)",
+      "Gp, 10 * log(PRL / Pges, 10)"
+    ],
+    "Untermenu": "Fundamentals"
+  },
+  {
+    "Formelzeichen": [
+      "RA",
+      "RB",
+      "RC",
+      "RAB",
+      "RAC",
+      "RBC"
+    ],
+    "Einheiten": [
+      "\u03a9",
+      "\u03a9",
+      "\u03a9",
+      "\u03a9",
+      "\u03a9",
+      "\u03a9"
+    ],
+    "Name": "Star and delta",
+    "Beschreibung": [
+      "Resistance from node A to the centre",
+      "Resistance from node B to the centre",
+      "Resistance from node C to the centre",
+      "Resistance between nodes A and B",
+      "Resistance between nodes A and C",
+      "Resistance between nodes B and C"
+    ],
+    "Formeln": [
+      "RAC, (RA * RB + RB * RC + RC * RA) / RB",
+      "RAB, (RA * RB + RB * RC + RC * RA) / RC",
+      "RBC, (RA * RB + RB * RC + RC * RA) / RA"
+    ],
+    "Untermenu": "Fundamentals"
+  },
+  {
+    "Formelzeichen": [
+      "U",
+      "R",
+      "l",
+      "P"
+    ],
+    "Einheiten": [
+      "V",
+      "\u03a9",
+      "A",
+      "W"
+    ],
+    "Name": "Ohm's law and power",
+    "Beschreibung": [
+      "Voltage",
+      "Resistance",
+      "Current",
+      "Power"
+    ],
+    "Formeln": [
+      "U, R * l",
+      "P, U * l"
+    ],
+    "Untermenu": "Fundamentals"
+  },
+  {
+    "Formelzeichen": [
+      "U",
+      "u",
+      "us",
+      "w",
+      "f",
+      "T",
+      "uss",
+      "t"
+    ],
+    "Einheiten": [
+      "V",
+      "V",
+      "V",
+      "Hz",
+      "Hz",
+      "s",
+      "V",
+      "s"
+    ],
+    "Name": "AC quantities",
+    "Beschreibung": [
+      "RMS value",
+      "Instantaneous value",
+      "Peak value",
+      "Angular frequency",
+      "Frequency",
+      "Period",
+      "Peak-to-peak value",
+      "Point in time"
+    ],
+    "Formeln": [
+      "U, us / sqrt(2)",
+      "u, us * sin(w * t)",
+      "w, 2 * pi * f",
+      "T, 1 / f",
+      "uss, 2 * sqrt(2) * U"
+    ],
+    "Untermenu": "Fundamentals"
+  },
+  {
+    "Formelzeichen": [
+      "R",
+      "C",
+      "\u03c4",
+      "uc",
+      "ic",
+      "U",
+      "l",
+      "t"
+    ],
+    "Einheiten": [
+      "\u03a9",
+      "F",
+      "s",
+      "V",
+      "A",
+      "V",
+      "A",
+      "s"
+    ],
+    "Name": "Capacitor charging on DC",
+    "Beschreibung": [
+      "Series resistor",
+      "Capacitance",
+      "Time constant",
+      "Instantaneous voltage",
+      "Instantaneous current",
+      "Supply voltage",
+      "Initial current",
+      "Time"
+    ],
+    "Formeln": [
+      "\u03c4, R * C",
+      "uc, U * (1 - E ** (-1 * t / \u03c4))",
+      "ic, l * E ** (-t / \u03c4)",
+      "l, U / R"
+    ],
+    "Untermenu": "Capacitor"
+  },
+  {
+    "Formelzeichen": [
+      "R",
+      "C",
+      "\u03c4",
+      "uc",
+      "ic",
+      "U",
+      "l",
+      "t"
+    ],
+    "Einheiten": [
+      "\u03a9",
+      "F",
+      "s",
+      "V",
+      "A",
+      "V",
+      "A",
+      "s"
+    ],
+    "Name": "Capacitor discharging on DC",
+    "Beschreibung": [
+      "Series resistor",
+      "Capacitance",
+      "Time constant",
+      "Instantaneous voltage",
+      "Instantaneous current",
+      "Supply voltage",
+      "Initial current",
+      "Time"
+    ],
+    "Formeln": [
+      "\u03c4, R * C",
+      "uc, U * (E ** (-1 * t / \u03c4))",
+      "ic, -l * E ** (-t / \u03c4)",
+      "l, U / R"
+    ],
+    "Untermenu": "Capacitor"
+  },
+  {
+    "Formelzeichen": [
+      "C",
+      "Xc",
+      "U",
+      "l",
+      "f"
+    ],
+    "Einheiten": [
+      "F",
+      "\u03a9",
+      "V",
+      "A",
+      "Hz"
+    ],
+    "Name": "Capacitor on AC",
+    "Beschreibung": [
+      "Capacitance",
+      "Capacitive reactance",
+      "Voltage",
+      "Current",
+      "Frequency"
+    ],
+    "Formeln": [
+      "Xc, U / l",
+      "Xc, 1 / (2 * pi * f * C)"
+    ],
+    "Untermenu": "Capacitor"
+  },
+  {
+    "Formelzeichen": [
+      "C1",
+      "C2",
+      "Cges"
+    ],
+    "Einheiten": [
+      "F",
+      "F",
+      "F"
+    ],
+    "Name": "Capacitors in parallel",
+    "Beschreibung": [
+      "Parallel capacitor 1",
+      "Parallel capacitor 2",
+      "Total capacitance"
+    ],
+    "Formeln": [
+      "Cges, C1 + C2"
+    ],
+    "Untermenu": "Capacitor"
+  },
+  {
+    "Formelzeichen": [
+      "C1",
+      "C2",
+      "Cges"
+    ],
+    "Einheiten": [
+      "F",
+      "F",
+      "F"
+    ],
+    "Name": "Capacitors in series",
+    "Beschreibung": [
+      "Series capacitor 1",
+      "Series capacitor 2",
+      "Total capacitance"
+    ],
+    "Formeln": [
+      "Cges, 1 / (1 / C1 + 1 / C2)"
+    ],
+    "Untermenu": "Capacitor"
+  },
+  {
+    "Formelzeichen": [
+      "L",
+      "R",
+      "\u03c4",
+      "ul",
+      "il",
+      "U",
+      "l",
+      "t"
+    ],
+    "Einheiten": [
+      "H",
+      "\u03a9",
+      "s",
+      "V",
+      "A",
+      "V",
+      "A",
+      "s"
+    ],
+    "Name": "Inductor charging on DC",
+    "Beschreibung": [
+      "Inductance",
+      "Resistance",
+      "Time constant",
+      "Instantaneous voltage",
+      "Instantaneous current",
+      "Voltage",
+      "Current",
+      "Time"
+    ],
+    "Formeln": [
+      "\u03c4, L / R",
+      "ul, U * E ** (-t / \u03c4)",
+      "il, l * (1 - E **(-t / \u03c4))",
+      "l, U / R"
+    ],
+    "Untermenu": "Inductor"
+  },
+  {
+    "Formelzeichen": [
+      "L",
+      "R",
+      "\u03c4",
+      "ul",
+      "il",
+      "U",
+      "l",
+      "t"
+    ],
+    "Einheiten": [
+      "H",
+      "\u03a9",
+      "s",
+      "V",
+      "A",
+      "V",
+      "A",
+      "s"
+    ],
+    "Name": "Inductor discharging on DC",
+    "Beschreibung": [
+      "Inductance",
+      "Resistance",
+      "Time constant",
+      "Instantaneous voltage",
+      "Instantaneous current",
+      "Voltage",
+      "Current",
+      "Time"
+    ],
+    "Formeln": [
+      "\u03c4, L / R",
+      "ul, -U * E ** (-t / \u03c4)",
+      "il, l * (E **(-t / \u03c4))",
+      "l, U / R"
+    ],
+    "Untermenu": "Inductor"
+  },
+  {
+    "Formelzeichen": [
+      "L",
+      "Xl",
+      "U",
+      "l",
+      "f"
+    ],
+    "Einheiten": [
+      "H",
+      "\u03a9",
+      "V",
+      "A",
+      "Hz"
+    ],
+    "Name": "Inductor on AC",
+    "Beschreibung": [
+      "Inductance",
+      "Inductive reactance",
+      "Voltage",
+      "Current",
+      "Frequency"
+    ],
+    "Formeln": [
+      "Xl, U / l",
+      "Xl, 2 * pi * f * L"
+    ],
+    "Untermenu": "Inductor"
+  },
+  {
+    "Formelzeichen": [
+      "C",
+      "Xc",
+      "R",
+      "Z",
+      "Uc",
+      "Ur",
+      "Uges",
+      "l",
+      "\u03c6",
+      "f"
+    ],
+    "Einheiten": [
+      "F",
+      "\u03a9",
+      "\u03a9",
+      "\u03a9",
+      "V",
+      "V",
+      "V",
+      "A",
+      "\u00b0",
+      "Hz"
+    ],
+    "Name": "RC series circuit",
+    "Beschreibung": [
+      "Capacitance",
+      "Capacitive reactance",
+      "Resistance",
+      "Impedance",
+      "Capacitor voltage",
+      "Resistor voltage",
+      "Total voltage",
+      "Current",
+      "Phase shift",
+      "Frequency"
+    ],
+    "Formeln": [
+      "Xc, 1 / (2 * pi * f * C)",
+      "Uges ** 2, (Ur ** 2 + Uc ** 2)",
+      "Z, Uges / l",
+      "Z, (R ** 2 + Xc ** 2) ** (1/2)"
+    ],
+    "Untermenu": "Resistance & reactance"
+  },
+  {
+    "Formelzeichen": [
+      "RC",
+      "RB",
+      "IC",
+      "IBsoll",
+      "IBist",
+      "UB",
+      "UBE",
+      "UE",
+      "UCEsat",
+      "\u00fc",
+      "B",
+      "Pv",
+      "caPv"
+    ],
+    "Einheiten": [
+      "\u03a9",
+      "\u03a9",
+      "A",
+      "A",
+      "A",
+      "V",
+      "V",
+      "V",
+      "V",
+      "",
+      "",
+      "W",
+      "W"
+    ],
+    "Name": "Transistor as a switch",
+    "Beschreibung": [
+      "Collector resistor",
+      "Base resistor",
+      "Collector current",
+      "Base current without overdrive",
+      "Base current with overdrive",
+      "Supply voltage",
+      "Base-emitter voltage",
+      "Input voltage",
+      "Collector-emitter saturation voltage",
+      "Overdrive factor (2 - 5)",
+      "DC current gain",
+      "Power dissipation (base included)",
+      "Power dissipation (base excluded)"
+    ],
+    "Formeln": [
+      "(UB - UCEsat) / IC, RC",
+      "IC / B, IBsoll",
+      "\u00fc * IBsoll, IBist",
+      "(UE - UBE) / IBist, RB",
+      "UCEsat * IC + UBE * IBist, Pv",
+      "UCEsat * IC, caPv"
+    ],
+    "Untermenu": "Transistor"
+  },
+  {
+    "Formelzeichen": [
+      "ti",
+      "tp",
+      "D",
+      "T",
+      "f",
+      "RA",
+      "RB",
+      "C"
+    ],
+    "Einheiten": [
+      "s",
+      "s",
+      "%",
+      "s",
+      "Hz",
+      "\u03a9",
+      "\u03a9",
+      "F"
+    ],
+    "Name": "NE555 astable",
+    "Beschreibung": [
+      "Pulse time (output high)",
+      "Pause time (output low)",
+      "Duty cycle",
+      "Period",
+      "Frequency",
+      "Resistance",
+      "Resistance",
+      "Capacitor"
+    ],
+    "Formeln": [
+      "ti + tp, T",
+      "0.69 * (RA + RB) * C, ti",
+      "0.69 * RB * C, tp",
+      "0.69 * (RA + 2 * RB) * C, T",
+      "1 / T, f",
+      "ti / T * 100, D"
+    ],
+    "Untermenu": "NE555"
+  },
+  {
+    "Formelzeichen": [
+      "ti",
+      "R",
+      "C"
+    ],
+    "Einheiten": [
+      "s",
+      "\u03a9",
+      "F"
+    ],
+    "Name": "NE555 monostable",
+    "Beschreibung": [
+      "Pulse time (output high)",
+      "Resistance",
+      "Capacitor"
+    ],
+    "Formeln": [
+      "R * C * 1.1, ti"
+    ],
+    "Untermenu": "NE555"
+  },
+  {
+    "Formelzeichen": [
+      "A",
+      "a",
+      "Zin",
+      "Zout",
+      "R1",
+      "R2",
+      "R3"
+    ],
+    "Einheiten": [
+      "dB",
+      "",
+      "\u03a9",
+      "\u03a9",
+      "\u03a9",
+      "\u03a9",
+      "\u03a9"
+    ],
+    "Name": "Pi attenuator",
+    "Beschreibung": [
+      "Attenuation in dB",
+      "Attenuation factor",
+      "Input impedance",
+      "Output impedance",
+      "Resistor to the input",
+      "Resistor to the output",
+      "Resistor to GND"
+    ],
+    "Formeln": [
+      "10 ** (A / 20), a",
+      "((a ** 2 - 1) * Zin * Zout ** (1 / 2)) / ((a ** 2 + 1) * Zout ** (1 / 2) - 2 * a * Zin ** (1 / 2)), R1",
+      "((a ** 2 - 1) * (Zin * Zout) ** (1 / 2)) / (2 * a), R2",
+      "((a ** 2 - 1) * Zout * Zin ** (1 / 2)) / ((a ** 2 + 1) * Zin ** (1 / 2) - 2 * a * Zout ** (1 / 2)), R3"
+    ],
+    "Untermenu": "Attenuator"
+  },
+  {
+    "Formelzeichen": [
+      "Gp",
+      "Vp",
+      "Gu",
+      "Vu",
+      "P1",
+      "P2",
+      "U1",
+      "U2"
+    ],
+    "Einheiten": [
+      "dB",
+      "",
+      "dB",
+      "",
+      "W",
+      "W",
+      "V",
+      "V"
+    ],
+    "Name": "dB conversion",
+    "Beschreibung": [
+      "Power gain in dB",
+      "Power gain factor",
+      "Voltage gain in dB",
+      "Voltage gain factor",
+      "Input power",
+      "Output power",
+      "Input voltage",
+      "Output voltage"
+    ],
+    "Formeln": [
+      "P2 / P1, Vp",
+      "10 ** (Gp / 10), Vp",
+      "U2 / U1, Vu",
+      "10 ** (Gu / 20), Vu",
+      "Gp, Gu"
+    ],
+    "Untermenu": "Conversion"
+  },
+  {
+    "Formelzeichen": [
+      "\u03bb",
+      "f"
+    ],
+    "Einheiten": [
+      "m",
+      "Hz"
+    ],
+    "Name": "Wavelength",
+    "Beschreibung": [
+      "Wavelength",
+      "Frequency"
+    ],
+    "Formeln": [
+      "300000000 / f, \u03bb"
+    ],
+    "Untermenu": "Communications"
+  },
+  {
+    "Formelzeichen": [
+      "fgu",
+      "fgo",
+      "vumax",
+      "RE",
+      "RFB",
+      "CE",
+      "CFB"
+    ],
+    "Einheiten": [
+      "Hz",
+      "Hz",
+      "",
+      "\u03a9",
+      "\u03a9",
+      "F",
+      "F"
+    ],
+    "Name": "Op-amp band-pass",
+    "Beschreibung": [
+      "Lower cut-off frequency",
+      "Upper cut-off frequency",
+      "Maximum voltage gain",
+      "Input resistor",
+      "Feedback resistor",
+      "Input capacitor",
+      "Feedback capacitor"
+    ],
+    "Formeln": [
+      "-vumax * RE, RFB",
+      "1 / (2 * pi * fgo * RFB), CFB",
+      "1 / (2 * pi * fgu * RE), CE"
+    ],
+    "Untermenu": "Op-amp"
+  },
+  {
+    "Formelzeichen": [
+      "fg",
+      "vumax",
+      "RE",
+      "RFB",
+      "CFB"
+    ],
+    "Einheiten": [
+      "Hz",
+      "",
+      "\u03a9",
+      "\u03a9",
+      "F"
+    ],
+    "Name": "Op-amp low-pass",
+    "Beschreibung": [
+      "Cut-off frequency",
+      "Maximum voltage gain",
+      "Input resistor",
+      "Feedback resistor",
+      "Capacitor"
+    ],
+    "Formeln": [
+      "-vumax * RE, RFB",
+      "1 / (2 * pi * fg * RFB), CFB"
+    ],
+    "Untermenu": "Op-amp"
+  },
+  {
+    "Formelzeichen": [
+      "fg",
+      "vumax",
+      "RE",
+      "CE",
+      "RFB"
+    ],
+    "Einheiten": [
+      "Hz",
+      "",
+      "\u03a9",
+      "F",
+      "\u03a9"
+    ],
+    "Name": "Op-amp high-pass",
+    "Beschreibung": [
+      "Cut-off frequency",
+      "Maximum voltage gain",
+      "Input resistor",
+      "Series capacitor",
+      "Feedback resistor"
+    ],
+    "Formeln": [
+      "CE, 1 / (2 * pi * fg * RFB)",
+      "RFB, -vumax * RE"
+    ],
+    "Untermenu": "Op-amp"
+  },
+  {
+    "Formelzeichen": [
+      "Vu",
+      "RC",
+      "RE",
+      "RL"
+    ],
+    "Einheiten": [
+      "",
+      "\u03a9",
+      "\u03a9",
+      "\u03a9"
+    ],
+    "Name": "Common emitter stage",
+    "Beschreibung": [
+      "Voltage gain",
+      "Collector resistor",
+      "Emitter resistor",
+      "Load resistor"
+    ],
+    "Formeln": [
+      "Vu, ((RC * RL) / (RC + RL)) / RE"
+    ],
+    "Untermenu": "Transistor"
+  },
+  {
+    "Formelzeichen": [
+      "Ub",
+      "IF",
+      "UF",
+      "Rv",
+      "URv"
+    ],
+    "Einheiten": [
+      "V",
+      "A",
+      "V",
+      "\u03a9",
+      "V"
+    ],
+    "Name": "LED series resistor",
+    "Beschreibung": [
+      "Supply voltage",
+      "Forward current",
+      "Forward voltage",
+      "Series resistor",
+      "Voltage across the resistor"
+    ],
+    "Formeln": [
+      "Ub, UF + URv",
+      "IF, URv / Rv"
+    ],
+    "Untermenu": "Fundamentals"
+  },
+  {
+    "Formelzeichen": [
+      "R1",
+      "R2",
+      "Uout",
+      "Uref",
+      "Iadj"
+    ],
+    "Einheiten": [
+      "\u03a9",
+      "\u03a9",
+      "V",
+      "V",
+      "A"
+    ],
+    "Name": "LM317 regulator",
+    "Beschreibung": [
+      "Upper resistor",
+      "Lower resistor",
+      "Output voltage",
+      "Reference voltage",
+      "ADJ current"
+    ],
+    "Formeln": [
+      "Uout, Uref * (1 + R2 / R1) + R2 * Iadj"
+    ],
+    "Untermenu": "LM317"
+  },
+  {
+    "Formelzeichen": [
+      "f",
+      "T",
+      "R",
+      "C",
+      "VH",
+      "VTP",
+      "VTN"
+    ],
+    "Einheiten": [
+      "Hz",
+      "s",
+      "\u03a9",
+      "F",
+      "V",
+      "V",
+      "V"
+    ],
+    "Name": "Schmitt trigger oscillator",
+    "Beschreibung": [
+      "Frequency",
+      "Period",
+      "Resistance",
+      "Capacitance",
+      "Hysteresis voltage",
+      "Upper threshold",
+      "Lower threshold"
+    ],
+    "Formeln": [
+      "f, VH / R / C",
+      "VH, VTP - VTN",
+      "f, 1 / T"
+    ],
+    "Untermenu": "Oscillator"
+  },
+  {
+    "Formelzeichen": [
+      "Tk",
+      "Tc",
+      "Tf"
+    ],
+    "Einheiten": [
+      "\u00b0K",
+      "\u00b0C",
+      "\u00b0F"
+    ],
+    "Name": "Temperature conversion",
+    "Beschreibung": [
+      "Kelvin",
+      "Celsius",
+      "Fahrenheit"
+    ],
+    "Formeln": [
+      "Tk, Tc + 273.15",
+      "Tc, (Tf - 32) / 1.8"
+    ],
+    "Untermenu": "Conversion"
+  }
+]
