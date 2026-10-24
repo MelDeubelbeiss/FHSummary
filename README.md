@@ -24,5 +24,7 @@ Then open <http://localhost:8777>, or just double-click `index.html`.
 It rearranges equations exactly where it can, falls back to numeric root
 finding, and resorts to substitution for coupled unknowns — showing the
 solution path it took. E6…E96 rounding lets you see what happens with real
-component values. See [`formula-solver/README.md`](formula-solver/README.md)
-for the format and the details.
+component values. Tests live in `formula-solver/tests.html`; open it in the
+browser from the same server. See
+[`formula-solver/README.md`](formula-solver/README.md) for the format and the
+details.

@@ -14,6 +14,8 @@ formula-solver/
 ├── js/solver.js        solving the system (rearrange / numeric / substitute)
 ├── js/store.js         load, save, import, export the JSON
 ├── js/app.js           user interface
+├── tests.html          test suite — open it in the browser
+├── tools/sync-seed.py  refresh the fallback copy inside index.html
 └── data/
     ├── formulas.json          30 formula sets (default, English)
     ├── formulas-de.json       the same 30 sets in German
@@ -77,9 +79,14 @@ Three equivalent ways:
    asked whether to merge (same `Name` + `Untermenu` is replaced) or to replace
    everything.
 
-If you edit `data/formulas.json` by hand it is worth updating the embedded
-fallback copy in `index.html` (`<script id="seed-data">`) as well — it is only
-used when the page is opened without a web server.
+If you edit `data/formulas.json` by hand, refresh the fallback copy embedded
+in `index.html` afterwards — it is what the page falls back on when opened
+without a web server:
+
+```bash
+python3 tools/sync-seed.py          # update it
+python3 tools/sync-seed.py --check  # just report, exits 1 when stale
+```
 
 ## How it solves
 
@@ -107,6 +114,14 @@ positive one is shown.
 
 Quantities that cannot be determined simply stay empty — the status line says
 how many are still open.
+
+**Where it stops.** It solves one unknown at a time, plus one assumed unknown
+in the substitution pass. A system that only gives way to *two* simultaneous
+assumptions is out of reach — three equations each holding the same three
+unknowns, say. Star/delta is exactly that shape, which is why the set carries
+the reverse formulas explicitly rather than relying on the solver to invert
+them. If a set of yours only works in one direction, writing the reverse
+formula into the JSON is the fix.
 
 ## Recalculating (the “Adjusted” column)
 
@@ -218,3 +233,33 @@ set / your global default / the built-in default”) and in the tooltip of the
 * `dB`, `°C` and similar units no longer get SI prefixes (no more `mdB`).
 * The formula data ships in English; `data/formulas-de.json` keeps the original
   German wording and can be imported at any time.
+
+## Tests
+
+`tests.html` is the test suite. Serve the folder and open it — no framework, no
+install, it loads the same modules the app does and reads the real
+`data/formulas.json`:
+
+```bash
+python3 -m http.server 8777     # then open http://localhost:8777/tests.html
+```
+
+91 checks over the parser, number formatting, the E series, all three solver
+strategies, the shipped data and the export format. Two of them are sweeps over
+the whole database:
+
+* **swap one given for one result** — for every set, solve it forwards, then
+  hand back one computed value in exchange for one of the inputs and check the
+  answer still satisfies every equation. 111 cases; 16 come back
+  underdetermined, which is correct, not a failure.
+* **ask for every driving quantity at once** — hands over everything the
+  formulas derive and asks for the inputs back. This is the sweep that would
+  have caught the missing delta→star formulas: a set that only runs one way
+  shows up in the "not recoverable" list at the bottom of the page. Most
+  entries there are legitimate (you cannot get two resistors back out of one
+  total), so read it as a hint, not a verdict.
+
+Several checks exist because something was once wrong: a pole mistaken for a
+root, a closing equation that was satisfied for any value and happily
+"confirmed" 1 pΩ, SI prefixes on decibels. Those keep their notes in the page
+so the reason survives.

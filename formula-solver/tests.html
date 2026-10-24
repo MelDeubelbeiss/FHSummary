@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Formula Solver — tests</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f4f6f9; --fg: #16202b; --dim: #5d6b7a; --line: #d7dee7; --card: #fff;
+    --ok: #0d7a55; --bad: #c0392b; --warn: #a8640a;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #0e1319; --fg: #e4ebf3; --dim: #93a2b4; --line: #27313d; --card: #161d26;
+            --ok: #3ddc97; --bad: #ff7b72; --warn: #f0b429; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 28px 20px 60px; background: var(--bg); color: var(--fg);
+         font: 14px/1.55 "Inter", system-ui, sans-serif; }
+  .wrap { max-width: 920px; margin: 0 auto; }
+  h1 { font-size: 20px; margin: 0 0 4px; letter-spacing: -0.01em; }
+  .sub { color: var(--dim); margin: 0 0 20px; }
+  .total { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap;
+           padding: 14px 16px; border: 1px solid var(--line); border-radius: 10px;
+           background: var(--card); margin-bottom: 18px; }
+  .total .big { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; }
+  .pass { color: var(--ok); } .fail { color: var(--bad); } .note { color: var(--warn); }
+  .suite { border: 1px solid var(--line); border-radius: 10px; background: var(--card);
+           margin-bottom: 10px; overflow: hidden; }
+  .suite > h2 { font-size: 13px; margin: 0; padding: 10px 14px; border-bottom: 1px solid var(--line);
+                display: flex; gap: 10px; align-items: center; letter-spacing: 0.04em;
+                text-transform: uppercase; color: var(--dim); }
+  .suite > h2 .count { margin-left: auto; font-weight: 500;
+                       font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 11px; }
+  ul { list-style: none; margin: 0; padding: 6px 0; }
+  li { display: flex; gap: 10px; padding: 3px 14px; align-items: baseline; }
+  li .mark { flex: none; width: 14px; font-weight: 700; }
+  li .detail { color: var(--dim); font-family: "JetBrains Mono", ui-monospace, monospace;
+               font-size: 11.5px; margin-left: auto; text-align: right; }
+  li.bad { background: color-mix(in oklab, var(--bad) 10%, transparent); }
+  .quiet li.good { display: none; }
+  .info { padding: 8px 14px; color: var(--dim); font-size: 12.5px; }
+  .info code { font-family: "JetBrains Mono", ui-monospace, monospace; }
+  button { font: inherit; padding: 5px 11px; border: 1px solid var(--line); border-radius: 7px;
+           background: var(--card); color: inherit; cursor: pointer; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Formula Solver — tests</h1>
+  <p class="sub">Open this page from the same server as the app
+    (<code>python3 -m http.server</code>), it reads the real <code>data/formulas.json</code>.</p>
+  <div id="total" class="total">running…</div>
+  <div id="out"></div>
+</div>
+
+<script src="js/math.js"></script>
+<script src="js/format.js"></script>
+<script src="js/solver.js"></script>
+<script src="js/recalc.js"></script>
+<script src="js/store.js"></script>
+<script>
+(function () {
+  'use strict';
+  var M = FS.math, F = FS.format, SV = FS.solver, RC = FS.recalc, S = FS.store;
+
+  /* ------------------------------------------------------------ harness */
+  var suites = [], current = null, passed = 0, failed = 0, failures = [];
+
+  function suite(name, fn) { suites.push({ name: name, fn: fn }); }
+  function check(label, ok, detail) {
+    current.items.push({ label: label, ok: !!ok, detail: detail === undefined ? '' : String(detail) });
+    if (ok) passed++; else { failed++; failures.push(current.name + ' — ' + label +
+      (detail ? ' (' + detail + ')' : '')); }
+  }
+  function near(label, got, want, tol) {
+    tol = tol || 1e-6;
+    var scale = Math.max(Math.abs(want), 1e-12);
+    var ok = typeof got === 'number' && isFinite(got) && Math.abs(got - want) / scale < tol;
+    check(label, ok, got + (ok ? '' : ' ≠ ' + want));
+  }
+  function note(text) { current.notes.push(text); }
+
+  function val(src) { return M.evaluate(M.parse(src), {}); }
+  function set(name) {
+    var s = S.state.sets.filter(function (x) { return x.Name === name; })[0];
+    if (!s) throw new Error('no formula set named ' + name);
+    return SV.compileSet(s);
+  }
+  function solve(name, inputs) { return SV.solve(set(name), inputs); }
+
+  /* ------------------------------------------------------------- math.js */
+  suite('math — parsing and evaluation', function () {
+    near('precedence 2 + 3 * 4', val('2 + 3 * 4'), 14);
+    near('brackets (2 + 3) * 4', val('(2 + 3) * 4'), 20);
+    near('power is right associative', val('2 ** 3 ** 2'), 512);
+    near('unary minus binds loosest', val('-2 ** 2'), -4);
+    near('division is left associative', val('10 / 2 / 5'), 1);
+    near('Pow(a, b)', val('Pow(3, 4)'), 81);
+    near('sqrt', val('sqrt(81)'), 9);
+    near('natural log', val('log(E)'), 1);
+    near('log with base', val('log(1000, 10)'), 3);
+    near('pi', val('pi'), Math.PI);
+    near('nested functions', val('abs(sin(pi / 2) - 2)'), 1);
+
+    var eq = M.splitEquation('Rges, R1 + R2');
+    check('splits on the top-level comma', eq && eq[0].trim() === 'Rges' && eq[1].trim() === 'R1 + R2');
+    var eq2 = M.splitEquation('Gu, 20 * log(Uout / Uin, 10)');
+    check('ignores commas inside brackets', eq2 && eq2[1].indexOf('log(Uout / Uin, 10)') >= 0, eq2 && eq2[1]);
+    check('accepts = as separator', !!M.splitEquation('a = b + c'));
+    check('no separator gives null', M.splitEquation('R1 + R2') === null);
+
+    check('constants are not free symbols', M.symbolsOf(M.parse('pi * r ** 2')).join() === 'r');
+    var threw = false;
+    try { M.evaluate(M.parse('a + 1'), {}); } catch (e) { threw = e.name === 'MissingSymbol'; }
+    check('unknown symbol raises MissingSymbol', threw);
+    threw = false;
+    try { M.parse('2 +'); } catch (e) { threw = e.name === 'ParseError'; }
+    check('truncated expression raises ParseError', threw);
+    threw = false;
+    try { M.parse('frobnicate(2)'); } catch (e) { threw = e.name === 'ParseError'; }
+    check('unknown function raises ParseError', threw);
+  });
+
+  suite('math — typesetting', function () {
+    check('Rges becomes R with subscript', M.prettySymbol('Rges').indexOf('<sub>ges</sub>') > 0);
+    check('tau becomes a greek letter', M.prettySymbol('tau').indexOf('τ') > 0);
+    check('single letters keep no subscript', M.prettySymbol('U').indexOf('<sub>') < 0);
+    var html = M.renderEquation({ lhs: M.parse('a'), rhs: M.parse('b / c') });
+    check('division renders as a fraction', html.indexOf('m-frac') > 0);
+    check('markup is escaped', M.esc('<b>&') === '&lt;b&gt;&amp;');
+  });
+
+  /* ----------------------------------------------------------- format.js */
+  suite('format — numbers, prefixes, E series', function () {
+    check('4700 Ω reads as 4.7 kΩ', F.formatValue(4700, 'Ω') === '4.7 kΩ', F.formatValue(4700, 'Ω'));
+    check('0.000047 F reads as 47 µF', F.formatValue(0.000047, 'F') === '47 µF', F.formatValue(0.000047, 'F'));
+    check('zero keeps its unit', F.formatValue(0, 'V') === '0 V', F.formatValue(0, 'V'));
+    check('1e-13 F reads as 100 fF', F.formatValue(1e-13, 'F') === '100 fF', F.formatValue(1e-13, 'F'));
+    check('dB gets no SI prefix', F.formatValue(-0.8378, 'dB').indexOf('mdB') < 0, F.formatValue(-0.8378, 'dB'));
+    check('°C gets no SI prefix', F.formatValue(0.5, '°C') === '0.5 °C', F.formatValue(0.5, '°C'));
+
+    near('parses 4k7', F.parseInput('4k7').value, 4700);
+    near('parses a decimal comma', F.parseInput('1,5').value, 1.5);
+    near('parses scientific notation', F.parseInput('4.7e3').value, 4700);
+    near('parses a bare prefix', F.parseInput('2m').value, 0.002);
+    near('parses u as micro', F.parseInput('10u').value, 1e-5);
+    check('rejects letters', F.parseInput('abc') === null);
+    check('empty input is null', F.parseInput('   ') === null);
+
+    near('4620 snaps to E12 4.7k', F.snapToESeries(4620, 12), 4700);
+    near('1234 snaps to E24 1.2k', F.snapToESeries(1234, 24), 1200);
+    near('6.8 µ is already E6', F.snapToESeries(6.8e-6, 6), 6.8e-6);
+    near('negative values keep their sign', F.snapToESeries(-1234, 24), -1200);
+    near('snapping across a decade', F.snapToESeries(9800, 12), 10000);
+    near('snapping is idempotent', F.snapToESeries(F.snapToESeries(3333, 24), 24),
+         F.snapToESeries(3333, 24));
+  });
+
+  /* ----------------------------------------------------------- solver.js */
+  suite('solver — the three strategies', function () {
+    var r = solve("Ohm's law and power", { R: 2, l: 3 });
+    near('rearranging forwards: U = R·I', r.values.U, 6);
+    near('… and P follows', r.values.P, 18);
+
+    r = solve("Ohm's law and power", { U: 6, P: 18 });
+    near('rearranging backwards gives I', r.values.l, 3);
+    near('… and R', r.values.R, 2);
+
+    r = solve('Resistors in parallel', { Rges: 1500, R2: 3300 });
+    near('numeric route: R1 from the parallel formula', r.values.R1, 1500 * 3300 / (3300 - 1500));
+
+    r = solve('Voltage divider, unloaded', { R2: 3300, Uin: 12, PR1: 10.61e-3 });
+    check('substitution reaches R1 through Iges', isFinite(r.values.R1), r.values.R1);
+    var step = r.steps.filter(function (s) { return s.symbol === 'R1'; })[0];
+    check('… and reports it as substituted', step && step.method === 'substituted', step && step.method);
+    check('… and flags the second solution', step && step.ambiguous && step.alternatives.length === 1);
+  });
+
+  suite('solver — refusing to invent values', function () {
+    var r = solve('Capacitor charging on DC', { C: 2.2e-6, U: 5, t: 1e-3, ic: 0.5 });
+    check('an unreachable current solves nothing', r.unresolved.length === 4, r.unresolved.join());
+    check('… and raises no bogus conflict', r.conflicts.length === 0);
+    note('ic = 0.5 A cannot occur with these parts; a sign change at the pole of τ ' +
+         'used to be mistaken for a solution.');
+
+    r = solve('Capacitor charging on DC', { C: 2.2e-6, U: 5, t: 1e-3, ic: 2e-3 });
+    near('a reachable current does solve', r.values.R, 168.5, 1e-3);
+
+    r = solve('NE555 astable', { ti: 200e-6, tp: 120e-6 });
+    near('NE555: period follows from the two times', r.values.T, 320e-6);
+    near('… and the frequency', r.values.f, 3125);
+    near('… and the duty cycle', r.values.D, 62.5);
+    check('… while RA, RB and C stay open', r.unresolved.join() === 'RA,RB,C', r.unresolved.join());
+    note('Two equations cannot fix three parts — the closing equation was satisfied ' +
+         'for any value and used to "confirm" 1 pΩ.');
+
+    r = solve('NE555 astable', { ti: 200e-6, tp: 120e-6, C: 10e-9 });
+    near('… adding C resolves RB', r.values.RB, 120e-6 / (0.69 * 10e-9));
+    near('… and RA', r.values.RA, 80e-6 / (0.69 * 10e-9));
+  });
+
+  suite('solver — contradictions and both directions', function () {
+    var r = solve("Ohm's law and power", { U: 10, R: 2, l: 3 });
+    check('inconsistent input is reported', r.conflicts.length === 1, r.conflicts.length);
+
+    r = solve('Star and delta', { RA: 30, RB: 44, RC: 66 });
+    near('star → delta: RAB', r.values.RAB, 94);
+    near('star → delta: RAC', r.values.RAC, 141);
+    near('star → delta: RBC', r.values.RBC, 206.8);
+    check('star → delta leaves nothing open', r.unresolved.length === 0, r.unresolved.join());
+
+    r = solve('Star and delta', { RAB: 94, RAC: 141, RBC: 206.8 });
+    near('delta → star: RA', r.values.RA, 30);
+    near('delta → star: RB', r.values.RB, 44);
+    near('delta → star: RC', r.values.RC, 66);
+    check('delta → star raises no conflict', r.conflicts.length === 0, r.conflicts.length);
+    note('The reverse direction needs its own formulas: three equations each holding all ' +
+         'three unknowns are beyond one assumed value.');
+  });
+
+  /* ----------------------------------------------------------- recalc.js */
+  suite('recalc — rule resolution', function () {
+    var rules = { 'Ω': 'e24', 'RA': 'e96', '*': 'free' };
+    check('a symbol beats its unit', RC.modeFor(rules, 'RA', 'Ω') === 'e96');
+    check('a unit matches every quantity in it', RC.modeFor(rules, 'RB', 'Ω') === 'e24');
+    check('anything else falls through to *', RC.modeFor(rules, 'Uin', 'V') === 'free');
+    check('no * means automatic', RC.modeFor({ 'Ω': 'e24' }, 'Uin', 'V') === 'auto');
+
+    check('invalid modes are dropped', JSON.stringify(RC.clean({ 'Ω': 'e24', 'F': 'nope' }))
+          === '{"Ω":"e24"}');
+    check('an all-invalid map becomes null', RC.clean({ 'F': 'nope' }) === null);
+    check('a non-object becomes null', RC.clean([1, 2]) === null && RC.clean('x') === null);
+
+    var own = { Name: 'x', Recalc: { 'Ω': 'e96' } };
+    check('a set brings its own rules', RC.rulesFor(own).source === 'set');
+    check('… otherwise the built-in applies', RC.rulesFor({ Name: 'y' }).source === 'builtin');
+    check('built-in rounds resistors to E24', RC.BUILTIN['Ω'] === 'e24');
+    check('built-in leaves the rest automatic', RC.BUILTIN['*'] === 'auto');
+    note('"*": "auto" on purpose — releasing everything also discards the supply ' +
+         'voltage, and then there is nothing left to recompute from.');
+  });
+
+  /* ------------------------------------------------------ shipped data */
+  suite('data — every shipped formula set', function () {
+    var bad = [], lengths = [], badRecalc = [];
+    S.state.sets.forEach(function (raw) {
+      var c = SV.compileSet(raw);
+      if (c.problems.length) bad.push(raw.Name + ': ' + c.problems[0].message);
+      if (raw.Einheiten.length !== raw.Formelzeichen.length ||
+          raw.Beschreibung.length !== raw.Formelzeichen.length) lengths.push(raw.Name);
+      if (raw.Recalc !== undefined && !RC.clean(raw.Recalc)) badRecalc.push(raw.Name);
+    });
+    check('the database is not empty', S.state.sets.length > 0, S.state.sets.length + ' sets');
+    check('every formula parses', bad.length === 0, bad.join(' | '));
+    check('units and descriptions line up', lengths.length === 0, lengths.join());
+    check('every Recalc field is valid', badRecalc.length === 0, badRecalc.join());
+
+    var json = S.toJSON();
+    check('export is pure ASCII', /^[\x00-\x7F]*$/.test(json));
+    check('export parses back', JSON.parse(json).length === S.state.sets.length);
+    check('export keeps the Recalc fields', (json.match(/"Recalc"/g) || []).length ===
+          S.state.sets.filter(function (s) { return s.Recalc; }).length);
+    note('Export is byte-identical to Python\'s json.dump(indent=2, ensure_ascii=True), ' +
+         'so the file still opens in the original PyQt version.');
+  });
+
+  /* --------------------------------------------- full round trip sweep */
+  function seedValues(c, symbols) {
+    var seeds = [1.2, 3.3, 4.7, 2.2, 5.6, 1.5, 8.2, 2.7];
+    var out = {};
+    symbols.forEach(function (s, i) { out[s] = seeds[i % seeds.length] * (1 + i * 0.07); });
+    return out;
+  }
+
+  function worstResidual(c, values) {
+    var worst = 0;
+    c.equations.forEach(function (eq) {
+      if (eq.error) return;
+      for (var i = 0; i < eq.unknownSyms.length; i++) if (!(eq.unknownSyms[i] in values)) return;
+      try {
+        var l = M.evaluate(eq.lhs, values), r = M.evaluate(eq.rhs, values);
+        var scale = Math.max(Math.abs(l), Math.abs(r), 1e-12);
+        worst = Math.max(worst, Math.abs(l - r) / scale);
+      } catch (e) { /* ignore */ }
+    });
+    return worst;
+  }
+
+  /* Symbols that never appear alone on a left-hand side drive the rest. */
+  function independents(c) {
+    var derived = {};
+    c.equations.forEach(function (eq) {
+      if (!eq.error && eq.lhs && eq.lhs.k === 'sym') derived[eq.lhs.n] = true;
+    });
+    return c.symbols.filter(function (s) { return !derived[s]; });
+  }
+
+  suite('round trip — swap one given for one result', function () {
+    var cases = 0, underdetermined = 0, wrong = [];
+    S.state.sets.forEach(function (raw) {
+      var c = SV.compileSet(raw);
+      var indep = independents(c);
+      if (!indep.length) return;
+      var base = seedValues(c, indep);
+      var forward = SV.solve(c, base);
+      if (forward.conflicts.length) return;       /* random seeds over-determine it */
+      var solved = c.symbols.filter(function (s) {
+        return !(s in base) && isFinite(forward.values[s]);
+      });
+      indep.forEach(function (drop) {
+        solved.slice(0, 3).forEach(function (give) {
+          cases++;
+          var inputs = {};
+          indep.forEach(function (s) { if (s !== drop) inputs[s] = base[s]; });
+          inputs[give] = forward.values[give];
+          var back = SV.solve(c, inputs);
+          if (!(drop in back.values)) { underdetermined++; return; }
+          var w = worstResidual(c, back.values);
+          if (w > 1e-5) wrong.push(raw.Name + ': ' + give + ' → ' + drop + ' residual ' + w.toExponential(2));
+        });
+      });
+    });
+    check('no inconsistent answers', wrong.length === 0, wrong.slice(0, 4).join(' | '));
+    check('the sweep actually ran', cases > 100, cases + ' cases');
+    note(cases + ' cases, ' + underdetermined + ' of them genuinely underdetermined ' +
+         '(the remaining quantity does not follow from what was given).');
+  });
+
+  suite('round trip — ask for every driving quantity at once', function () {
+    /* The gap this catches: a set whose formulas only run one way. Each case
+     * hands over everything the formulas derive and asks for the drivers back. */
+    var recovered = [], lost = [], symmetric = [];
+    S.state.sets.forEach(function (raw) {
+      var c = SV.compileSet(raw);
+      var indep = independents(c);
+      /* No driving quantity at all means every symbol sits on a left-hand
+       * side somewhere: the set already runs in both directions. */
+      if (!indep.length) { symmetric.push(raw.Name); return; }
+      if (indep.length === c.symbols.length) return;
+      var base = seedValues(c, indep);
+      var forward = SV.solve(c, base);
+      if (forward.conflicts.length) return;
+      var inputs = {};
+      c.symbols.forEach(function (s) {
+        if (indep.indexOf(s) < 0 && isFinite(forward.values[s])) inputs[s] = forward.values[s];
+      });
+      if (!Object.keys(inputs).length) return;
+      var back = SV.solve(c, inputs);
+      var ok = indep.every(function (s) { return isFinite(back.values[s]); });
+      (ok ? recovered : lost).push(raw.Name);
+    });
+    check('star and delta carries both directions',
+          symmetric.indexOf('Star and delta') >= 0,
+          symmetric.indexOf('Star and delta') >= 0 ? '' : 'the delta → star formulas are gone');
+    check('the sweep covered the database',
+          symmetric.length + recovered.length + lost.length > 15,
+          (symmetric.length + recovered.length + lost.length) + ' sets');
+    note('Run both ways already: ' + (symmetric.join(', ') || 'none') + '.');
+    note('Recovered from the derived side: ' + (recovered.join(', ') || 'none') + '.');
+    note('Not recoverable from the derived side: ' + (lost.join(', ') || 'none') +
+         '. Usually right — the formulas genuinely lose information — but this is also ' +
+         'where a missing reverse formula hides, so it is worth a glance when adding sets.');
+  });
+
+  /* -------------------------------------------------------------- render */
+  function render() {
+    var out = document.getElementById('out');
+    out.innerHTML = '';
+    suites.forEach(function (s) {
+      var bad = s.items.filter(function (i) { return !i.ok; }).length;
+      var el = document.createElement('section');
+      el.className = 'suite';
+      var h = '<h2>' + s.name + '<span class="count ' + (bad ? 'fail' : 'pass') + '">' +
+        (s.items.length - bad) + '/' + s.items.length + '</span></h2><ul>';
+      s.items.forEach(function (i) {
+        h += '<li class="' + (i.ok ? 'good' : 'bad') + '"><span class="mark ' +
+          (i.ok ? 'pass">✓' : 'fail">✕') + '</span><span>' + i.label + '</span>' +
+          (i.detail ? '<span class="detail">' + M.esc(i.detail) + '</span>' : '') + '</li>';
+      });
+      h += '</ul>';
+      s.notes.forEach(function (n) { h += '<div class="info">' + n + '</div>'; });
+      el.innerHTML = h;
+      out.appendChild(el);
+    });
+
+    var t = document.getElementById('total');
+    t.innerHTML = '<span class="big ' + (failed ? 'fail' : 'pass') + '">' +
+      (failed ? failed + ' failed' : 'all passed') + '</span>' +
+      '<span class="pass">' + passed + ' checks</span>' +
+      (failed ? '<span class="fail">' + failures[0] + '</span>' : '') +
+      '<span style="margin-left:auto"><button id="toggle">show only failures</button></span>';
+    document.getElementById('toggle').addEventListener('click', function () {
+      document.getElementById('out').classList.toggle('quiet');
+      this.textContent = document.getElementById('out').classList.contains('quiet')
+        ? 'show everything' : 'show only failures';
+    });
+    document.title = (failed ? failed + ' FAILED — ' : 'all passed — ') + 'Formula Solver tests';
+  }
+
+  S.load().then(function () {
+    suites.forEach(function (s) {
+      current = { name: s.name, items: [], notes: [] };
+      try { s.fn(); } catch (e) { check('suite did not crash', false, e.message || String(e)); }
+      s.items = current.items;
+      s.notes = current.notes;
+    });
+    render();
+    window.__tests = { passed: passed, failed: failed, failures: failures };
+  });
+})();
+</script>
+</body>
+</html>
