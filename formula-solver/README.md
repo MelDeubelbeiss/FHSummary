@@ -263,3 +263,7 @@ Several checks exist because something was once wrong: a pole mistaken for a
 root, a closing equation that was satisfied for any value and happily
 "confirmed" 1 pΩ, SI prefixes on decibels. Those keep their notes in the page
 so the reason survives.
+
+## Licence
+
+[MIT](../LICENSE) — © 2026 Melvin Deubelbeiss.

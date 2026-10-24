@@ -31,3 +31,9 @@ component values. Tests live in `formula-solver/tests.html`; open it in the
 browser from the same server. See
 [`formula-solver/README.md`](formula-solver/README.md) for the format and the
 details.
+
+## Licence
+
+[MIT](LICENSE) — © 2026 Melvin Deubelbeiss. Use it, fork it, build on it; it
+comes with no warranty. The licence covers the code in this repository, which
+is written from scratch and has no third-party dependencies.
