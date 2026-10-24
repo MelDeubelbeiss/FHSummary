@@ -666,7 +666,12 @@
       "1 / T, f",
       "ti / T * 100, D"
     ],
-    "Untermenu": "NE555"
+    "Untermenu": "NE555",
+    "Recalc": {
+      "\u03a9": "e24",
+      "F": "e12",
+      "*": "free"
+    }
   },
   {
     "Formelzeichen": [
@@ -688,7 +693,12 @@
     "Formeln": [
       "R * C * 1.1, ti"
     ],
-    "Untermenu": "NE555"
+    "Untermenu": "NE555",
+    "Recalc": {
+      "\u03a9": "e24",
+      "F": "e12",
+      "*": "free"
+    }
   },
   {
     "Formelzeichen": [
@@ -821,7 +831,12 @@
       "1 / (2 * pi * fgo * RFB), CFB",
       "1 / (2 * pi * fgu * RE), CE"
     ],
-    "Untermenu": "Op-amp"
+    "Untermenu": "Op-amp",
+    "Recalc": {
+      "\u03a9": "e24",
+      "F": "e12",
+      "*": "free"
+    }
   },
   {
     "Formelzeichen": [
@@ -850,7 +865,12 @@
       "-vumax * RE, RFB",
       "1 / (2 * pi * fg * RFB), CFB"
     ],
-    "Untermenu": "Op-amp"
+    "Untermenu": "Op-amp",
+    "Recalc": {
+      "\u03a9": "e24",
+      "F": "e12",
+      "*": "free"
+    }
   },
   {
     "Formelzeichen": [
@@ -879,7 +899,12 @@
       "CE, 1 / (2 * pi * fg * RFB)",
       "RFB, -vumax * RE"
     ],
-    "Untermenu": "Op-amp"
+    "Untermenu": "Op-amp",
+    "Recalc": {
+      "\u03a9": "e24",
+      "F": "e12",
+      "*": "free"
+    }
   },
   {
     "Formelzeichen": [
@@ -933,7 +958,12 @@
       "Ub, UF + URv",
       "IF, URv / Rv"
     ],
-    "Untermenu": "Fundamentals"
+    "Untermenu": "Fundamentals",
+    "Recalc": {
+      "\u03a9": "e24",
+      "IF": "free",
+      "*": "auto"
+    }
   },
   {
     "Formelzeichen": [
@@ -961,7 +991,12 @@
     "Formeln": [
       "Uout, Uref * (1 + R2 / R1) + R2 * Iadj"
     ],
-    "Untermenu": "LM317"
+    "Untermenu": "LM317",
+    "Recalc": {
+      "\u03a9": "e24",
+      "Uout": "free",
+      "*": "auto"
+    }
   },
   {
     "Formelzeichen": [
@@ -997,7 +1032,14 @@
       "VH, VTP - VTN",
       "f, 1 / T"
     ],
-    "Untermenu": "Oscillator"
+    "Untermenu": "Oscillator",
+    "Recalc": {
+      "\u03a9": "e24",
+      "F": "e12",
+      "f": "free",
+      "T": "free",
+      "*": "auto"
+    }
   },
   {
     "Formelzeichen": [

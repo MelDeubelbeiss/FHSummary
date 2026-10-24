@@ -10,6 +10,7 @@ formula-solver/
 ├── css/app.css         design (light/dark, responsive, print view)
 ├── js/math.js          tokenizer, parser, evaluation, math typesetting
 ├── js/format.js        SI prefixes, number formatting, E series
+├── js/recalc.js        default recalculation rules (per unit or symbol)
 ├── js/solver.js        solving the system (rearrange / numeric / substitute)
 ├── js/store.js         load, save, import, export the JSON
 ├── js/app.js           user interface
@@ -123,6 +124,75 @@ As soon as one row is set to anything other than `automatic`, the “Adjusted”
 column appears: the whole set solved again with the rounded or held values.
 Unchanged values are dimmed. If that over-determines the set, the status line
 says so — then set a dependent quantity to `release`.
+
+### Setting whole groups at once
+
+Setting eight rows by hand gets old fast, so the bar above the table groups the
+quantities **by unit** — the unit is what tells a resistor from a capacitor:
+
+```
+RECALCULATE   Ω 2 [E24 ▾]  F 1 [E12 ▾]  V 2 [automatic ▾]      Real parts | All automatic | ⚙
+```
+
+* Each chip sets every quantity carrying that unit in one go. The count tells
+  you how many rows it covers, hovering lists their symbols. A chip whose rows
+  disagree shows `mixed` and a dashed border.
+* **Real parts** applies the whole default rule set in one click — out of the
+  box: Ω → E24, F → E12, H → E12, everything else → automatic.
+* **All automatic** puts everything back.
+* **⚙** edits the rules.
+
+Why is the fallback `automatic` rather than `release`? Releasing *everything*
+else also throws away the excitation you typed — supply voltage, time — and
+then there is nothing left to recompute from and the Adjusted column comes up
+empty. `automatic` keeps your inputs and lets the derived quantities follow the
+rounded parts, which is almost always what you want. Set the few quantities
+that really should move to `release` individually.
+
+### Default rules, and storing them in the JSON
+
+A rule maps a **unit** (`Ω`, `F`, `H`) or a single **symbol** (`RA`, `C1`) onto
+a mode, with `*` as the fallback for everything else. Symbols beat units, units
+beat `*`. The ⚙ dialog edits them and can save them in two places:
+
+* **Save as my default** — kept in the browser, used for every formula set.
+* **Store in this set** — written into the formula set as an optional
+  `"Recalc"` field, so it travels with the JSON and survives an export:
+
+```json
+{
+  "Formelzeichen": ["RA", "RB", "C", "f"],
+  "Einheiten":     ["Ω", "Ω", "F", "Hz"],
+  "Name":          "NE555 astable",
+  "Beschreibung":  ["Resistance", "Resistance", "Capacitor", "Frequency"],
+  "Formeln":       ["0.69 * (RA + RB) * C, ti"],
+  "Untermenu":     "NE555",
+  "Recalc":        { "Ω": "e24", "F": "e12", "*": "auto" }
+}
+```
+
+Eight of the shipped sets carry such a field, the ones where picking real
+parts is the whole point: both NE555 timers, the three op-amp filters, the LED
+series resistor, the LM317 and the Schmitt trigger oscillator. Open **NE555
+astable**, ask for 1 kHz at 60 % duty with a 10 nF cap, and the Adjusted column
+answers straight away what E24 resistors really give you — 1.021 kHz at 60.6 %.
+
+Note how those rules differ in their fallback, because the circuits do. For the
+timers and filters the parts fix everything, so `*` is `free` and the targets
+you typed are allowed to move. For the LED resistor and the LM317 the supply
+voltage has to stay put, so `*` is `auto` and only the one quantity the
+resistor actually shifts is released by name (`"IF": "free"`, `"Uout": "free"`)
+— a symbol rule overriding the unit rule above it.
+
+`Recalc` is the only addition to the original schema and it is optional — the
+Python version ignores unknown keys, so files stay interchangeable either way.
+A set that carries it opens with those modes already applied. The browser-wide
+default only applies on opening when “Apply automatically” is ticked in the
+dialog; otherwise it waits behind the **Real parts** button.
+
+Which rules are in force is shown in the dialog (“Currently using this formula
+set / your global default / the built-in default”) and in the tooltip of the
+**Real parts** button.
 
 ## Using it
 

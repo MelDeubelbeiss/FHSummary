@@ -2,7 +2,7 @@
 (function (NS) {
   'use strict';
 
-  var M = NS.math, F = NS.format, S = NS.store, SOLVER = NS.solver;
+  var M = NS.math, F = NS.format, S = NS.store, SOLVER = NS.solver, RC = NS.recalc;
 
   /* Mode for the second pass ("recalculate"):
    *   auto      - typed values stay, computed ones may adapt
@@ -153,13 +153,16 @@
     app.compiled = SOLVER.compileSet(set);
     app.rows = {};
 
+    /* Modes come from what was set earlier in this session, otherwise from
+     * the set's own "Recalc" rules (or the global default, if switched on). */
     var mem = app.memory[keyOf(set)] || {};
-    app.compiled.symbols.forEach(function (sym) {
+    var preset = RC.appliesOnOpen(set) ? RC.rulesFor(set).rules : null;
+    app.compiled.symbols.forEach(function (sym, i) {
       var m = mem[sym] || {};
       app.rows[sym] = {
         text: m.text || '',
         prefixExp: typeof m.prefixExp === 'number' ? m.prefixExp : 0,
-        mode: m.mode || 'auto'
+        mode: m.mode || (preset ? RC.modeFor(preset, sym, app.compiled.units[i]) : 'auto')
       };
     });
 
@@ -168,6 +171,19 @@
 
     renderNav();
     renderSet();
+  }
+
+  /* Drops the remembered modes (but keeps typed values), so freshly saved
+   * default rules are not shadowed by what was set earlier this session. */
+  function forgetModes(key) {
+    Object.keys(app.memory).forEach(function (k) {
+      if (key && k !== key) return;
+      var store = app.memory[k];
+      Object.keys(store).forEach(function (sym) { delete store[sym].mode; });
+    });
+    if (!key || (app.current && key === keyOf(app.current))) {
+      Object.keys(app.rows).forEach(function (sym) { app.rows[sym].mode = 'auto'; });
+    }
   }
 
   function saveMemory() {
@@ -237,6 +253,8 @@
       '<button class="btn btn-ghost sm" id="btn-clear">Clear inputs</button>';
     varPanel.appendChild(vhead);
 
+    varPanel.appendChild(buildBulkBar());
+
     var table = el('div', 'vtable');
     table.id = 'vtable';
     var th = el('div', 'vrow vhead');
@@ -265,7 +283,265 @@
     content.appendChild(stepPanel);
 
     $('#btn-clear').addEventListener('click', resetInputs);
+    syncModeControls();
     recompute();
+  }
+
+  /* --------------------------------------------------------------------- */
+  /* Bulk controls: set a whole group of quantities at once                  */
+  /* --------------------------------------------------------------------- */
+
+  /* Groups the quantities of the current set by unit, in table order. */
+  function unitGroups() {
+    var groups = [], byUnit = {};
+    app.compiled.symbols.forEach(function (sym, i) {
+      var unit = app.compiled.units[i] || '';
+      if (!byUnit[unit]) {
+        byUnit[unit] = { unit: unit, symbols: [] };
+        groups.push(byUnit[unit]);
+      }
+      byUnit[unit].symbols.push(sym);
+    });
+    return groups;
+  }
+
+  function buildBulkBar() {
+    var bar = el('div', 'bulkbar');
+    bar.id = 'bulkbar';
+    bar.appendChild(el('span', 'bulk-label', 'Recalculate'));
+
+    var groups = el('div', 'bulk-groups');
+    unitGroups().forEach(function (g) {
+      var chip = el('label', 'bulk-group');
+      chip.title = g.symbols.join(', ');
+      chip.innerHTML = '<span class="bg-unit">' + (g.unit ? M.esc(g.unit) : '—') +
+        '</span><span class="bg-count">' + g.symbols.length + '</span>';
+
+      var sel = el('select');
+      var mixed = el('option');
+      mixed.value = '';
+      mixed.textContent = 'mixed';
+      sel.appendChild(mixed);
+      MODES.forEach(function (m) {
+        var o = el('option');
+        o.value = m.id;
+        o.textContent = m.label;
+        sel.appendChild(o);
+      });
+      sel.addEventListener('change', function () {
+        if (!sel.value) return;
+        setModes(g.symbols, sel.value);
+      });
+      chip.appendChild(sel);
+      chip.dataset.unit = g.unit;
+      groups.appendChild(chip);
+    });
+    bar.appendChild(groups);
+
+    var actions = el('div', 'bulk-actions');
+
+    var rules = RC.rulesFor(app.current);
+    var apply = el('button', 'btn sm', 'Real parts');
+    apply.id = 'btn-real-parts';
+    apply.title = 'Apply the default rules: ' + describeRules(rules.rules) +
+      '\n(from ' + sourceLabel(rules.source) + ')';
+    apply.addEventListener('click', function () { applyRules(rules.rules); });
+    actions.appendChild(apply);
+
+    var none = el('button', 'btn btn-ghost sm', 'All automatic');
+    none.addEventListener('click', function () {
+      setModes(app.compiled.symbols, 'auto');
+    });
+    actions.appendChild(none);
+
+    var gear = el('button', 'btn btn-ghost sm icon', '⚙');
+    gear.title = 'Edit the default recalculation rules';
+    gear.addEventListener('click', openRulesDialog);
+    actions.appendChild(gear);
+
+    bar.appendChild(actions);
+    return bar;
+  }
+
+  function sourceLabel(src) {
+    if (src === 'set') return 'this formula set';
+    if (src === 'global') return 'your global default';
+    return 'the built-in default';
+  }
+
+  function describeRules(rules) {
+    return Object.keys(rules).map(function (k) {
+      return (k === '*' ? 'everything else' : k) + ' → ' + labelOfMode(rules[k]);
+    }).join(', ');
+  }
+
+  function labelOfMode(id) {
+    for (var i = 0; i < MODES.length; i++) if (MODES[i].id === id) return MODES[i].label;
+    return id;
+  }
+
+  function setModes(symbols, mode) {
+    symbols.forEach(function (sym) {
+      if (app.rows[sym]) app.rows[sym].mode = mode;
+    });
+    syncModeControls();
+    recompute();
+  }
+
+  function applyRules(rules) {
+    app.compiled.symbols.forEach(function (sym, i) {
+      app.rows[sym].mode = RC.modeFor(rules, sym, app.compiled.units[i]);
+    });
+    syncModeControls();
+    recompute();
+  }
+
+  /* Pushes app.rows back into the row selects and the group chips. */
+  function syncModeControls() {
+    var table = $('#vtable');
+    if (!table) return;
+    app.compiled.symbols.forEach(function (sym) {
+      var row = table.querySelector('.vrow[data-sym="' + cssEscape(sym) + '"]');
+      if (!row) return;
+      var sel = row.querySelector('select.mode');
+      sel.value = app.rows[sym].mode;
+      sel.classList.toggle('set', app.rows[sym].mode !== 'auto');
+    });
+
+    var bar = $('#bulkbar');
+    if (!bar) return;
+    unitGroups().forEach(function (g, i) {
+      var chip = bar.querySelectorAll('.bulk-group')[i];
+      if (!chip) return;
+      var modes = {};
+      g.symbols.forEach(function (sym) { modes[app.rows[sym].mode] = true; });
+      var keys = Object.keys(modes);
+      var sel = chip.querySelector('select');
+      sel.value = keys.length === 1 ? keys[0] : '';
+      chip.classList.toggle('set', keys.length === 1 && keys[0] !== 'auto');
+      chip.classList.toggle('mixed', keys.length > 1);
+    });
+  }
+
+  /* --------------------------------------------------------------------- */
+  /* Dialog for the default rules                                           */
+  /* --------------------------------------------------------------------- */
+
+  function openRulesDialog() {
+    var active = RC.rulesFor(app.current);
+    var rows = $('#rules-rows');
+    rows.innerHTML = '';
+
+    Object.keys(active.rules).forEach(function (k) {
+      if (k !== '*') rows.appendChild(ruleRow(k, active.rules[k]));
+    });
+    $('#rules-rest').value = Object.prototype.hasOwnProperty.call(active.rules, '*')
+      ? active.rules['*'] : 'auto';
+    $('#rules-auto').checked = RC.autoApply();
+    $('#rules-origin').textContent = 'Currently using ' + sourceLabel(active.source) + '.';
+    $('#btn-rules-set').disabled = !app.current;
+    $('#btn-rules-set').title = app.current
+      ? 'Writes a "Recalc" field into «' + app.current.Name + '» — exported with the JSON'
+      : '';
+    $('#rules-dialog').classList.add('open');
+    refreshRuleSuggestions();
+  }
+
+  function ruleRow(key, mode) {
+    var r = el('div', 'rule-row');
+    r.innerHTML = '<input class="inp mono rule-key" list="rule-keys" placeholder="Ω or RA" value="' +
+      M.esc(key) + '">';
+    var sel = el('select', 'inp rule-mode');
+    MODES.forEach(function (m) {
+      var o = el('option');
+      o.value = m.id;
+      o.textContent = m.label;
+      sel.appendChild(o);
+    });
+    sel.value = RC.isMode(mode) ? mode : 'auto';
+    r.appendChild(sel);
+    var x = el('button', 'x-btn', '✕');
+    x.title = 'Remove rule';
+    x.addEventListener('click', function () { r.remove(); });
+    r.appendChild(x);
+    return r;
+  }
+
+  /* Offers the units and symbols of the current set as rule keys. */
+  function refreshRuleSuggestions() {
+    var list = $('#rule-keys');
+    list.innerHTML = '';
+    if (!app.compiled) return;
+    var seen = {};
+    app.compiled.units.concat(app.compiled.symbols).forEach(function (k) {
+      if (!k || seen[k]) return;
+      seen[k] = true;
+      var o = el('option');
+      o.value = k;
+      list.appendChild(o);
+    });
+  }
+
+  function collectRules() {
+    var rules = {};
+    $$('#rules-rows .rule-row').forEach(function (r) {
+      var k = $('.rule-key', r).value.trim();
+      if (k && k !== '*') rules[k] = $('.rule-mode', r).value;
+    });
+    var rest = $('#rules-rest').value;
+    if (rest !== 'auto') rules['*'] = rest;
+    return rules;
+  }
+
+  function closeRulesDialog() { $('#rules-dialog').classList.remove('open'); }
+
+  function bindRulesDialog() {
+    var rest = $('#rules-rest');
+    MODES.forEach(function (m) {
+      var o = el('option');
+      o.value = m.id;
+      o.textContent = m.label;
+      rest.appendChild(o);
+    });
+
+    $('#btn-rules-add').addEventListener('click', function () {
+      $('#rules-rows').appendChild(ruleRow('', 'e24'));
+    });
+    $('#btn-rules-close').addEventListener('click', closeRulesDialog);
+    $('#btn-rules-cancel').addEventListener('click', closeRulesDialog);
+
+    $('#btn-rules-global').addEventListener('click', function () {
+      var rules = collectRules();
+      RC.setGlobalRules(Object.keys(rules).length ? rules : null);
+      RC.setAutoApply($('#rules-auto').checked);
+      closeRulesDialog();
+      forgetModes(null);
+      if (app.current) selectSet(app.current, false);
+      toast('Saved as your default for every formula set');
+    });
+
+    $('#btn-rules-set').addEventListener('click', function () {
+      if (!app.current) return;
+      var rules = collectRules();
+      var copy = JSON.parse(JSON.stringify(app.current));
+      if (Object.keys(rules).length) copy.Recalc = rules;
+      else delete copy.Recalc;
+      RC.setAutoApply($('#rules-auto').checked);
+      var saved = S.replaceSet(app.current, copy);
+      closeRulesDialog();
+      forgetModes(keyOf(saved));
+      selectSet(saved, false);
+      toast('Stored in «' + saved.Name + '» — included on export');
+    });
+
+    $('#btn-rules-apply').addEventListener('click', function () {
+      applyRules(collectRules());
+      closeRulesDialog();
+    });
+
+    $('#rules-dialog').addEventListener('mousedown', function (e) {
+      if (e.target === $('#rules-dialog')) closeRulesDialog();
+    });
   }
 
   function buildRow(sym, unit, desc, idx) {
@@ -336,6 +612,7 @@
     mode.addEventListener('change', function () {
       st.mode = mode.value;
       mode.classList.toggle('set', st.mode !== 'auto');
+      syncModeControls();
       recompute();
     });
     modeCell.appendChild(mode);
@@ -364,9 +641,15 @@
     }
   }
 
+  /* Reset clears the inputs and goes back to the set's default modes. */
   function resetInputs() {
-    app.compiled.symbols.forEach(function (s) {
-      app.rows[s] = { text: '', prefixExp: 0, mode: 'auto' };
+    var preset = RC.appliesOnOpen(app.current) ? RC.rulesFor(app.current).rules : null;
+    app.compiled.symbols.forEach(function (sym, i) {
+      app.rows[sym] = {
+        text: '',
+        prefixExp: 0,
+        mode: preset ? RC.modeFor(preset, sym, app.compiled.units[i]) : 'auto'
+      };
     });
     app.memory[keyOf(app.current)] = {};
     renderSet();
@@ -569,6 +852,9 @@
     } else if (adjusted && adjusted.conflicts.length) {
       cls = 'warn';
       msg = '«Adjusted» is over-determined — set a dependent quantity to «release»';
+    } else if (adjusted && adjusted.unresolved.length > res.unresolved.length) {
+      cls = 'warn';
+      msg = '«Adjusted» has too little to go on — set the released inputs back to «automatic»';
     }
     html += '<span class="msg ' + cls + '">' + M.esc(msg) + '</span>';
     box.innerHTML = html;
@@ -861,10 +1147,12 @@
     $('#modal').addEventListener('mousedown', function (e) {
       if (e.target === $('#modal')) closeModal();
     });
+    bindRulesDialog();
 
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') {
-        if ($('#modal').classList.contains('open')) closeModal();
+        if ($('#rules-dialog').classList.contains('open')) closeRulesDialog();
+        else if ($('#modal').classList.contains('open')) closeModal();
         else closeSidebar();
       }
       if (e.key === '/' && document.activeElement.tagName !== 'INPUT' &&

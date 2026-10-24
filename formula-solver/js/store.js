@@ -3,7 +3,12 @@
  * The JSON structure is unchanged from the Python version, German keys and all:
  * [ { "Formelzeichen": [...], "Einheiten": [...], "Name": "...",
  *     "Beschreibung": [...], "Formeln": ["target, expression", ...],
- *     "Untermenu": "..." }, ... ]
+ *     "Untermenu": "...",
+ *     "Recalc": { "Ω": "e24", "*": "free" } }, ... ]
+ *
+ * "Recalc" is optional and is the only addition to the original schema. It
+ * holds the default recalculation modes for the set; the Python version
+ * ignores unknown keys, so files stay interchangeable either way.
  */
 (function (NS) {
   'use strict';
@@ -15,7 +20,7 @@
   var state = { sets: [], source: 'empty', dirty: false };
 
   function fieldsOf(set) {
-    return {
+    var out = {
       Formelzeichen: Array.isArray(set.Formelzeichen) ? set.Formelzeichen.slice() : [],
       Einheiten: Array.isArray(set.Einheiten) ? set.Einheiten.slice() : [],
       Name: typeof set.Name === 'string' ? set.Name : '',
@@ -23,6 +28,9 @@
       Formeln: Array.isArray(set.Formeln) ? set.Formeln.slice() : [],
       Untermenu: typeof set.Untermenu === 'string' && set.Untermenu ? set.Untermenu : 'Uncategorised'
     };
+    var recalc = NS.recalc && NS.recalc.clean(set.Recalc);
+    if (recalc) out.Recalc = recalc;
+    return out;
   }
 
   /* Turns arbitrary JSON into a list of well-formed formula sets. */
@@ -51,6 +59,9 @@
         p.push('Invalid symbol: ' + s);
       }
     });
+    if (set.Recalc !== undefined && !NS.recalc.clean(set.Recalc)) {
+      p.push('"Recalc" must map symbols or units onto ' + NS.recalc.MODES.join(' / '));
+    }
     set.Formeln.forEach(function (f) {
       var parts = NS.math.splitEquation(f);
       if (!parts) { p.push('"' + f + '": no comma between quantity and expression'); return; }
