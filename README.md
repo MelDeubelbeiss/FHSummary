@@ -3,6 +3,9 @@
 Study material and small tools from my engineering degree — reference sheets,
 calculators and whatever else turns out to be worth keeping.
 
+Published at **<https://meldeubelbeiss.github.io/FHSummary/>** — everything is
+static, so the pages run straight from the browser with no build step.
+
 ## Contents
 
 | Folder | What it is |
